@@ -11,8 +11,11 @@ const timetoStop = 20;
 
 engine.start();
 
-while (engine.isRunning && engine.currentTick < timetoStop) {
+const intervalId = setInterval(() => {
+    if (engine.currentTick >= timetoStop) {
+        engine.stop();
+        clearInterval(intervalId);
+        return;
+    }
     engine.update();
-}
-
-engine.stop();
+}, engine.tickRate);

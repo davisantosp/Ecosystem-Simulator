@@ -1,0 +1,2 @@
+
+export type MovementSpeed = number;

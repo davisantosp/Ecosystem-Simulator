@@ -1,9 +1,10 @@
+import { Distance } from "../shared/types/Distance";
 import { Position } from "../shared/types/Position";
 
 export class World {
     constructor(
-        private readonly width: number,
-        private readonly height: number,
+        private readonly width: Distance,
+        private readonly height: Distance,
     ) {
     }
 

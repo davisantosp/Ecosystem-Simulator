@@ -1,21 +1,19 @@
 import { AnimalState } from "../enums/states/AnimalState";
 import { AnimalSpecies } from "../enums/entities_types/AnimalSpecies";
 import { Diet } from "../enums/other/Diet";
-import { Gene } from "../../shared/types/Gene";
-import { Position } from "../../shared/types/Position";
 import { ST } from "../../shared/types/ST";
-import { AnimalActions } from "../enums/states/AnimalActions";
+import { AnimalActions } from "../enums/other/AnimalActions";
+import { Distance } from "../../shared/types/Distance";
+import { MovementSpeed } from "../../shared/types/MovementSpeed";
+import { LivingEntity } from "./LivingEntity";
 
-export interface Animal {
-    id: string;
+export interface Animal extends LivingEntity {
     hunger: ST;
     thirst: ST;
-    procreatingSeason: ST;
-    lifeSpan: ST;
-    animalState: AnimalState;
+    procreate: ST;
     animalSpecie: AnimalSpecies;
     currentAction: AnimalActions;
     diet: Diet;
-    genes: Gene[];
-    position: Position;
+    speed: MovementSpeed;
+    visionRadius: Distance;
 }
