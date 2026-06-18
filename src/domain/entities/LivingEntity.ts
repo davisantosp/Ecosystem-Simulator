@@ -1,16 +1,18 @@
-import { EntityState } from "../enums/other/EntityState";
 import { Gene } from "../../shared/types/Gene";
+import { EntityState } from "../enums/states_enums/EntityState";
 import { Position } from "../../shared/types/Position";
-import { LivingEntitiesType } from "../enums/entities_types/LivingEntitiesType";
-import { Animal } from "./Animal";
-import { Plant } from "./Plant";
+import { LivingEntitiesTypes } from "../enums/entities_enums/LivingEntitiesTypes";
+import { ID } from "../../shared/types/ID";
 
-export interface LivingEntity {
-    id: string;
-    currentLifespan: number;
-    maxLifespan: number;
-    genes: Gene[];
-    position: Position;
-    entityType: LivingEntitiesType;
-    entityState: EntityState;
+export abstract class LivingEntity {
+    constructor(
+        public readonly id: ID,
+        public position: Position,
+        public readonly entityType: LivingEntitiesTypes,
+
+        public currentLifespan: number,
+        public maxLifespan: number,
+        public genes: Gene[],
+        public entityState: EntityState[]
+    ) { }
 }

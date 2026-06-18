@@ -1,5 +1,4 @@
-
-export enum PlantState {
+export enum PlantStates {
     SEED,
     SPROUT,
     MATURE,

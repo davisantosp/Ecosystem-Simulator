@@ -1,8 +1,9 @@
 import { Engine } from "./core/Engine";
 import { World } from "./core/World";
+import { Distance } from "./shared/types/Distance";
 
-const worldWidth = 100;
-const worldHeight = 100;
+const worldWidth: Distance = 100;
+const worldHeight: Distance = 100;
 
 const world = new World(worldWidth, worldHeight);
 const engine = new Engine(world);

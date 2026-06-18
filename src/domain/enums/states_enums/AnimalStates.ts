@@ -1,4 +1,4 @@
-export enum AnimalState {
+export enum AnimalStates {
     NORMAL,
     HUNGRY,
     THIRSTY,

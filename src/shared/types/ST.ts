@@ -1,4 +1,2 @@
 //System Ticks
-export type ST = {
-    value: number;
-}
+export type ST = number;

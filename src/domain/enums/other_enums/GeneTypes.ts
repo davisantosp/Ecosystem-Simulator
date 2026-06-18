@@ -1,4 +1,4 @@
-export enum GeneType {
+export enum GeneTypes {
     HUNGER_GENE,
     THIRST_GENE,
     PROCREATION_GENE,

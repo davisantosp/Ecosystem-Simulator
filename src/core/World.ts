@@ -1,3 +1,4 @@
+import { LivingEntity } from "../domain/entities/LivingEntity";
 import { Distance } from "../shared/types/Distance";
 import { Position } from "../shared/types/Position";
 
@@ -5,6 +6,7 @@ export class World {
     constructor(
         private readonly width: Distance,
         private readonly height: Distance,
+        public livingEntities?: LivingEntity[],
     ) {
     }
 
