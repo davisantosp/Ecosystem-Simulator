@@ -3,6 +3,7 @@ import { EntityState } from "../enums/states_enums/EntityState";
 import { Position } from "../../shared/types/Position";
 import { LivingEntitiesTypes } from "../enums/entities_enums/LivingEntitiesTypes";
 import { ID } from "../../shared/types/ID";
+import { ST } from "../../shared/types/ST";
 
 export abstract class LivingEntity {
     constructor(
@@ -10,9 +11,8 @@ export abstract class LivingEntity {
         public position: Position,
         public readonly entityType: LivingEntitiesTypes,
 
-        public currentLifespan: number,
-        public maxLifespan: number,
+        public lifespan: ST,
         public genes: Gene[],
-        public entityState: EntityState[]
+        public entityStates: EntityState[]
     ) { }
 }

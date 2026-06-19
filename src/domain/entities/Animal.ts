@@ -1,5 +1,4 @@
 import { AnimalSpecies } from "../enums/entities_enums/AnimalSpecies";
-import { Diets } from "../enums/other_enums/Diets";
 import { ST } from "../../shared/types/ST";
 import { Distance } from "../../shared/types/Distance";
 import { MovementSpeed } from "../../shared/types/MovementSpeed";
@@ -10,14 +9,14 @@ import { Gene } from "../../shared/types/Gene";
 import { EntityState } from "../enums/states_enums/EntityState";
 import { LivingEntitiesTypes } from "../enums/entities_enums/LivingEntitiesTypes";
 import { ID } from "../../shared/types/ID";
+import { Diet } from "../../shared/types/Diet";
 
 export class Animal extends LivingEntity {
     constructor(
         id: ID,
         position: Position,
 
-        currentLifespan: number,
-        maxLifespan: number,
+        lifespan: ST,
         genes: Gene[],
         entityState: EntityState[],
 
@@ -26,7 +25,7 @@ export class Animal extends LivingEntity {
         public thirst: ST,
         public procreate: ST,
         public currentAction: AnimalActions,
-        public diet: Diets,
+        public diet: Diet,
         public speed: MovementSpeed,
         public visionRadius: Distance
     ) {
@@ -34,8 +33,7 @@ export class Animal extends LivingEntity {
             id,
             position,
             LivingEntitiesTypes.ANIMAL,
-            currentLifespan,
-            maxLifespan,
+            lifespan,
             genes,
             entityState
         );
