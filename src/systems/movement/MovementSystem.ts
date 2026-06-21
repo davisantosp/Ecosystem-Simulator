@@ -7,16 +7,21 @@ import { movementStrategyMap } from "./MovementStrategyMap";
 
 export class MovementSystem {
     static moveEntity(animal: Animal, world: World): void {
-        const entityNextMovement = this.chooseNextMovement(animal);
-        try {
-            if (entityNextMovement.entityMove(animal, world))
-                return;
-        } catch (error: any) {
-            throw new Error("Movement Fail");
+        const orderedMovements = this.chooseNextMovements(animal);
+
+        for (const strategy of orderedMovements) {
+            try {
+                if (strategy.entityMove(animal, world))
+                    return;
+            } catch (error: any) {
+                console.error(`Falha ao executar a estratégia: ${strategy.constructor.name}`, error);
+            }
         }
+
+        new RandomlyMove().entityMove(animal, world);
     }
 
-    private static chooseNextMovement(animal: Animal): MovementStrategyInterface {
+    private static chooseNextMovements(animal: Animal): MovementStrategyInterface[] {
         if (!animal) throw new Error("Entity doesn't exist");
 
         const movementToDo: MovementStrategyInterface[] = [];
@@ -24,17 +29,17 @@ export class MovementSystem {
         for (const state of animal.entityStates) {
             const movement = movementStrategyMap.find(x => x.state === state);
             if (!movement?.strategy) {
-                return new RandomlyMove();
+                continue;
             }
             movementToDo.push(movement.strategy);
         }
-        if (!movementToDo) {
-            throw new Error("No movements available");
+        if (movementToDo.length === 0) {
+            return [new RandomlyMove()];
         }
-        return this.mostPriorityMovement(animal, movementToDo);
+        return this.sortMovementsByPriority(animal, movementToDo);
     }
 
-    private static mostPriorityMovement(animal: Animal, strategies: MovementStrategyInterface[]): MovementStrategyInterface {
+    private static sortMovementsByPriority(animal: Animal, strategies: MovementStrategyInterface[]): MovementStrategyInterface[] {
         type StrategyAndPriority = {
             strategy: MovementStrategyInterface,
             priority: number
@@ -50,11 +55,9 @@ export class MovementSystem {
 
             strategyAndPriorityMap.push(temp);
         }
-        if (!strategyAndPriorityMap || strategyAndPriorityMap === undefined)
-            throw new Error("No strategies found to select");
 
-        // Last value is the most priority one
-        const sortedMap = strategyAndPriorityMap.sort((a, b) => a.priority - b.priority);
-        return sortedMap.at(-1)!.strategy;
+        // Reversed
+        const sortedMap = strategyAndPriorityMap.sort((a, b) => b.priority - a.priority);
+        return sortedMap.map(x => x.strategy);
     }
 }

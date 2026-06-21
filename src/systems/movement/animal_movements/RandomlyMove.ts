@@ -4,6 +4,7 @@ import { LivingEntitiesTypes } from "../../../domain/enums/entities_enums/Living
 import { MovementStrategyInterface } from "../MovementStrategyInterface";
 
 export class RandomlyMove implements MovementStrategyInterface {
+
     entityMove(livingEntity: LivingEntity, world: World): boolean {
         if (livingEntity.entityType != LivingEntitiesTypes.ANIMAL)
 
