@@ -1,16 +1,42 @@
 import { World } from "../../../core/World";
-import { LivingEntity } from "../../../domain/entities/LivingEntity";
-import { LivingEntitiesTypes } from "../../../domain/enums/entities_enums/LivingEntitiesTypes";
+import { Animal } from "../../../domain/entities/Animal";
+import { Position } from "../../../shared/types/Position";
 import { MovementStrategyInterface } from "../MovementStrategyInterface";
 
 export class RandomlyMove implements MovementStrategyInterface {
 
-    entityMove(livingEntity: LivingEntity, world: World): boolean {
-        if (livingEntity.entityType != LivingEntitiesTypes.ANIMAL)
+    entityMove(animal: Animal, world: World): boolean {
+        if (!animal) throw new Error("Entity not found to be moved.");
 
+        const currentPosition = animal.position;
 
+        const DIRECTIONS = [
+            { direction: "North", value: 1 },
+            { direction: "East", value: 2 },
+            { direction: "South", value: 3 },
+            { direction: "West", value: 4 },
+        ]
 
+        let newPosition: Position;
+        while (true) {
+            newPosition = { x: currentPosition.x, y: currentPosition.y }
 
-            return false;
+            for (let i = animal.speed; i > 0; i--) {
+                const direction = DIRECTIONS[Math.floor(Math.random() * DIRECTIONS.length)]?.direction;
+                switch (direction) {
+                    case "North": newPosition.y++;
+                    case "East": newPosition.x++;
+                    case "South": newPosition.y--;
+                    case "West": newPosition.x--;
+                }
+            }
+
+            if (world.isValidPosition(newPosition)) {
+                break;
+            }
+        }
+        // Will be changed to a function later
+        animal.position = newPosition
+        return true;
     }
 }
