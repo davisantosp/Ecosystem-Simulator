@@ -24,7 +24,6 @@ export class Animal extends LivingEntity {
         public hunger: ST,
         public thirst: ST,
         public procreate: ST,
-        public currentAction: AnimalActions,
         public diet: Diet,
         public speed: MovementSpeed,
         public visionRadius: Distance

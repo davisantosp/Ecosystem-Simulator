@@ -24,10 +24,10 @@ export class RandomlyMove implements MovementStrategyInterface {
             for (let i = animal.speed; i > 0; i--) {
                 const direction = DIRECTIONS[Math.floor(Math.random() * DIRECTIONS.length)]?.direction;
                 switch (direction) {
-                    case "North": newPosition.y++;
-                    case "East": newPosition.x++;
-                    case "South": newPosition.y--;
-                    case "West": newPosition.x--;
+                    case "North": newPosition.y++; break;
+                    case "East": newPosition.x++; break;
+                    case "South": newPosition.y--; break;
+                    case "West": newPosition.x--; break;
                 }
             }
 
