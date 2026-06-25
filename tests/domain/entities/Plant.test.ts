@@ -1,6 +1,6 @@
 import { Plant } from "../../../src/domain/entities/Plant";
-import { PlantFactory } from "../../factories/PlantFactory";
 import { PlantStates } from "../../../src/domain/enums/states_enums/PlantStates";
+import { PlantFactory } from "../../factories/PlantFactory";
 
 describe("Plant.getNutritionalValue", () => {
     it("should return the current nutritional value", () => {
@@ -9,6 +9,16 @@ describe("Plant.getNutritionalValue", () => {
         const value = plant.getNutritionalValue();
 
         expect(value).toBe(50);
+    });
+});
+
+describe("Plant.die", () => {
+    it("should add WITHERED state", () => {
+        const plant = PlantFactory.createGeneric({ entityStates: [PlantStates.MATURE] });
+
+        plant.die();
+
+        expect(plant.entityStates).toContain(PlantStates.WITHERED);
     });
 });
 
@@ -70,7 +80,7 @@ describe("Plant.grow", () => {
         expect(plant.entityStates).toContain(PlantStates.MATURE);
     });
 
-    it("should call die when nutritional value drops below zero", () => {
+    it("should transition to SEED when nutritional value is below sprout threshold", () => {
         const plant = PlantFactory.createGeneric({
             entityStates: [PlantStates.SPROUT],
             nutritionalValue: { current: -1, max: 100 },
@@ -78,7 +88,20 @@ describe("Plant.grow", () => {
 
         plant.grow();
 
-        expect(plant.entityStates).toContain(PlantStates.WITHERED);
+        expect(plant.entityStates).toContain(PlantStates.SEED);
+        expect(plant.entityStates).not.toContain(PlantStates.SPROUT);
+    });
+
+    it("should remove previous state when transitioning", () => {
+        const plant = PlantFactory.createGeneric({
+            entityStates: [PlantStates.SEED],
+            nutritionalValue: { current: 40, max: 100 },
+        });
+
+        plant.grow();
+
+        expect(plant.entityStates).toContain(PlantStates.SPROUT);
+        expect(plant.entityStates).not.toContain(PlantStates.SEED);
     });
 });
 
