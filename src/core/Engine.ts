@@ -1,3 +1,9 @@
+import { Animal } from "../domain/entities/Animal";
+import { Plant } from "../domain/entities/Plant";
+import { LivingEntitiesTypes } from "../domain/enums/entities_enums/LivingEntitiesTypes";
+import { AnimalStates } from "../domain/enums/states_enums/AnimalStates";
+import { PlantStates } from "../domain/enums/states_enums/PlantStates";
+import { TurnManager } from "./TurnManager";
 import { World } from "./World";
 
 export class Engine {
@@ -28,7 +34,7 @@ export class Engine {
         console.log("Engine stopped.");
     }
 
-    public update() {
+    public update(world: World) {
         if (this.isRunning) {
             this.currentTick++;
         }
@@ -38,6 +44,24 @@ export class Engine {
 
         console.log(`Tick: ${this.currentTick}`);
 
-        // update world state, entities, etc. here
+        const livingPlants: Plant[] = (world.livingEntities?.filter(x => x.entityType === LivingEntitiesTypes.PLANT) ?? []) as Plant[];
+        const livingAnimals: Animal[] = (world.livingEntities?.filter(x => x.entityType === LivingEntitiesTypes.ANIMAL) ?? []) as Animal[];
+        TurnManager.organizeAnimalsActionOrder(livingAnimals);
+
+        for (const animal of livingAnimals) {
+            animal.update();
+            if (animal.entityStates.includes(AnimalStates.DEAD)) {
+                continue;
+            }
+        }
+
+        for (const plant of livingPlants) {
+            plant.update();
+            if (plant.entityStates.includes(PlantStates.WITHERED)) {
+                continue;
+            }
+        }
+
+        world.deleteDeadEntities();
     }
 }

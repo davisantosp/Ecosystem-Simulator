@@ -2,8 +2,8 @@ import { World } from "../../core/World";
 import { Animal } from "../../domain/entities/Animal";
 import { Calculations } from "../systems_functions/Calculations";
 import { RandomlyMove } from "./animal_movements/RandomlyMove";
+import { movementStrategyRegistry } from "./animal_movements/registry/MovementStrategyRegistry";
 import { MovementStrategyInterface } from "./MovementStrategyInterface";
-import { movementStrategyMap } from "./MovementStrategyMap";
 
 export class MovementSystem {
     static moveEntity(animal: Animal, world: World): void {
@@ -27,7 +27,7 @@ export class MovementSystem {
         const movementToDo: MovementStrategyInterface[] = [];
 
         for (const state of animal.entityStates) {
-            const movement = movementStrategyMap.find(x => x.state === state);
+            const movement = movementStrategyRegistry.find(x => x.state === state);
             if (!movement?.strategy) {
                 continue;
             }
