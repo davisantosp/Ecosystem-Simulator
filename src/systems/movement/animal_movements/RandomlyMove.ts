@@ -18,8 +18,8 @@ export class RandomlyMove implements MovementStrategyInterface {
         ]
 
         let newPosition: Position = { ...currentPosition };
-        let attemps = 0;
-        while (attemps++ < 50) {
+        let attempts = 0, limitAttempts = 10;
+        while (attempts++ < limitAttempts) {
             newPosition = { ...currentPosition }
 
             for (let i = animal.speed; i > 0; i--) {
@@ -37,7 +37,8 @@ export class RandomlyMove implements MovementStrategyInterface {
             }
         }
         // Will be changed to a function later
-        animal.position = newPosition;
+        if (attempts !== limitAttempts)
+            animal.position = newPosition;
         return true;
     }
 }

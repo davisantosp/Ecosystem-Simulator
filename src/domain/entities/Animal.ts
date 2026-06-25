@@ -53,28 +53,36 @@ export class Animal extends LivingEntity implements AnimalActionsInterface {
             return;
         }
 
+        const minProcreation = this.procreation.min ?? 0;
+        this.procreation.current = Math.max(minProcreation, this.procreation.current - 1);
+
         this.syncStates();
         MovementSystem.moveEntity(this, world);
     }
+
     private syncStates(): void {
         const hungerRatio = this.hunger.current / (this.hunger.max ?? this.hunger.current);
         const thirstRatio = this.thirst.current / (this.thirst.max ?? this.thirst.current);
+        const procreationRatio = this.procreation.current / (this.procreation.max ?? this.procreation.current);
 
-        if (hungerRatio < 0.4) {
+        if (hungerRatio < 0.4)
             this.updateState([AnimalStates.HUNGRY]);
-        } else {
+        else
             this.removeState([AnimalStates.HUNGRY]);
-        }
-
-        if (thirstRatio < 0.4) {
+        if (thirstRatio < 0.4)
             this.updateState([AnimalStates.THIRSTY]);
-        } else {
+        else
             this.removeState([AnimalStates.THIRSTY]);
-        }
+        if (procreationRatio < 0.3)
+            this.updateState([AnimalStates.PROCREATING_SEASON]);
+        else
+            this.removeState([AnimalStates.PROCREATING_SEASON]);
     }
+
     override getNutritionalValue(): number {
         return ANIMAL_NUTRITIONAL_VALUE_MAP[this.animalSpecie] || 50;
     }
+
     override die(): void {
         this.updateState([AnimalStates.DEAD]);
     }
@@ -91,11 +99,5 @@ export class Animal extends LivingEntity implements AnimalActionsInterface {
     }
     drink(): void {
         this.thirst.current = this.thirst.max ?? 100;
-        this.thirst.max = this.thirst.current;
-
     }
-    procreate(): void {
-        throw new Error("Method not implemented.");
-    }
-
 }

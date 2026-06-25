@@ -2,10 +2,10 @@ import { World } from "../../core/World";
 import { Animal } from "../../domain/entities/Animal";
 import { LivingEntity } from "../../domain/entities/LivingEntity";
 import { LivingEntitiesTypes } from "../../domain/enums/entities_enums/LivingEntitiesTypes";
-import { TerrainTypes } from "../../domain/enums/other_enums/TerrainTypes";
 import { AnimalStates } from "../../domain/enums/states_enums/AnimalStates";
 import { PlantStates } from "../../domain/enums/states_enums/PlantStates";
 import { Position } from "../../shared/types/Position";
+import { ReproductionSystem } from "../reproduction/ReproductionSystem";
 import { Calculations } from "../systems_functions/Calculations";
 
 export class VisionSystem {
@@ -54,6 +54,24 @@ export class VisionSystem {
         }
 
         return closestWater;
+    }
+
+    static searchForMate(animal: Animal, world: World): Animal | null {
+        const entitiesInWorld = world.livingEntities;
+        if (!entitiesInWorld) return null;
+
+        const animalVisionRange = animal.visionRadius;
+        const entitiesWithinRange = entitiesInWorld.filter(x =>
+            x.id !== animal.id &&
+            x.entityType === LivingEntitiesTypes.ANIMAL &&
+            (x as Animal).animalSpecie === animal.animalSpecie &&
+            x.entityStates.includes(AnimalStates.PROCREATING_SEASON) &&
+            !x.entityStates.includes(AnimalStates.DEAD) &&
+            Calculations.distanceBetween(animal.position, x.position) <= animalVisionRange
+        );
+
+        return (this.closestEntityTarget(animal, entitiesWithinRange) as Animal);
+
     }
 
     private static closestEntityTarget(animal: Animal, entities: LivingEntity[]): LivingEntity | null {
