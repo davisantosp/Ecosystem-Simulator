@@ -7,8 +7,9 @@ import { Gene } from "../../shared/types/Gene";
 import { EntityState } from "../enums/states_enums/EntityState";
 import { LivingEntitiesTypes } from "../enums/entities_enums/LivingEntitiesTypes";
 import { ID } from "../../shared/types/ID";
+import { PlantActionsInterface } from "../../shared/actions_interfaces/PlantActionsInterface";
 
-export class Plant extends LivingEntity {
+export class Plant extends LivingEntity implements PlantActionsInterface {
     constructor(
         id: ID,
         position: Position,
@@ -28,4 +29,54 @@ export class Plant extends LivingEntity {
             lifespan, genes, entityState
         );
     }
+
+    override update(): void {
+        this.lifespan.current--;
+        if (this.lifespan.current <= 0) {
+            this.die();
+            return;
+        }
+
+        // Update nutritionalValue
+        this.photosynthesize();
+        // Update
+        this.grow();
+    }
+    override getNutritionalValue(): number {
+        return this.nutritionalValue.current;
+    }
+    photosynthesize(): void {
+        const foodProduction = Math.floor(this.growthRate.current / 10);
+        const currentNV = this.nutritionalValue.current;
+        const maxNV = this.nutritionalValue.max;
+
+        if (maxNV === undefined) {
+            this.nutritionalValue.current = currentNV + foodProduction;
+        } else {
+            this.nutritionalValue.current = Math.min(currentNV + foodProduction, maxNV);
+        }
+    }
+    grow(): void {
+        const currentNV = this.nutritionalValue.current;
+        let maxNV: number;
+        if (this.nutritionalValue.max !== undefined)
+            maxNV = this.nutritionalValue.max;
+        else if (this.lifespan.max !== undefined)
+            maxNV = this.lifespan.max;
+        else
+            maxNV = 100;
+
+        const seed = 0;
+        const sprout = Math.floor(maxNV / 3);
+        const mature = Math.floor((2 * maxNV) / 3);
+        if (currentNV >= mature)
+            this.updateState([PlantStates.MATURE]);
+        else if (currentNV >= sprout)
+            this.updateState([PlantStates.SPROUT]);
+        else if (currentNV >= seed)
+            this.updateState([PlantStates.SEED]);
+        else
+            this.die();
+    }
+
 }
