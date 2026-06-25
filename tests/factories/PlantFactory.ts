@@ -12,8 +12,8 @@ export class PlantFactory {
             [],
             [PlantStates.MATURE],
             PlantSpecies.COMMON,
-            10,
-            100
+            { current: 10 },
+            { current: 0, max: 100 },
         );
         return Object.assign(defaultPlant, overrides);
     }
@@ -26,8 +26,8 @@ export class PlantFactory {
             [],
             [PlantStates.MATURE],
             PlantSpecies.COMMON,
-            25,
-            150
+            { current: 25 },
+            { current: 0, max: 150 },
         );
         return Object.assign(newCommonPlant, overrides);
     }
@@ -40,8 +40,8 @@ export class PlantFactory {
             [],
             [PlantStates.MATURE],
             PlantSpecies.VENOMOUS,
-            25,
-            50
+            { current: 25 },
+            { current: 0, max: 50 },
         );
         return Object.assign(newVenomousPlant, overrides);
     }
@@ -54,8 +54,8 @@ export class PlantFactory {
             [],
             [PlantStates.MATURE],
             PlantSpecies.RARE,
-            25,
-            500
+            { current: 250 },
+            { current: 0, max: 500 },
         );
         return Object.assign(newRarePlant, overrides);
     }

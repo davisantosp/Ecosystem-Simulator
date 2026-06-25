@@ -47,14 +47,17 @@ describe("Move entity via MovementSystem", () => {
             {
                 position: { ...animalPosition },
                 hunger: { current: 10, max: 50 },
-                procreate: { current: 50, max: 50 },
+                procreation: { current: 50, max: 50 },
                 entityStates: [AnimalStates.HUNGRY, AnimalStates.PROCREATING_SEASON],
             }
         );
-        let plant = PlantFactory.createCommonPlant({ position: { ...plantPosition } });
+        const plant = PlantFactory.createCommonPlant({ position: { ...plantPosition } });
+        if (world.livingEntities) {
+            world.livingEntities.push(plant);
+        }
 
         MovementSystem.moveEntity(animal, world);
-        expect(animal.position).not.toEqual(animalPosition);
-        expect(world.isValidPosition(animal.position)).toBe(true);
+        expect(animal.position.x).toBeGreaterThan(animalPosition.x);
+        expect(animal.position.y).toEqual(animalPosition.y);
     })
 });

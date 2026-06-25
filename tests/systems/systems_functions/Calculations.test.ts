@@ -48,20 +48,13 @@ describe("Calculations.utilityScore", () => {
         expect(score).toBe(0);
     });
 
-    it("should compute utility score using numeric ST value", () => {
-        const animal = AnimalFactory.createGeneric({
-            hunger: 10,
+    it("should compute higher score when current is lower relative to max", () => {
+        const animalUrgent = AnimalFactory.createGeneric({
+            hunger: { current: 5, max: 50 },
         } as any);
-        const strategy = new SearchFood();
-
-        const score = Calculations.utilityScore(animal, strategy);
-
-        expect(score).toBeGreaterThan(0);
-    });
-
-    it("should compute higher score for more urgent numeric ST", () => {
-        const animalUrgent = AnimalFactory.createGeneric({ hunger: 5 } as any);
-        const animalNotUrgent = AnimalFactory.createGeneric({ hunger: 50 } as any);
+        const animalNotUrgent = AnimalFactory.createGeneric({
+            hunger: { current: 50, max: 50 },
+        } as any);
         const strategy = new SearchFood();
 
         const urgentScore = Calculations.utilityScore(animalUrgent, strategy);
