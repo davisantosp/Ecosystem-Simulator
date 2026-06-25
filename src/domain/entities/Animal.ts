@@ -90,7 +90,9 @@ export class Animal extends LivingEntity implements AnimalActionsInterface {
         food.die();
     }
     drink(): void {
-        throw new Error("Method not implemented.");
+        this.thirst.current = this.thirst.max ?? 100;
+        this.thirst.max = this.thirst.current;
+
     }
     procreate(): void {
         throw new Error("Method not implemented.");

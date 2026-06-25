@@ -12,14 +12,24 @@ export class World {
         public readonly width: Distance,
         public readonly height: Distance,
         public livingEntities?: LivingEntity[],
+        public waterSources?: Position[]
     ) {
     }
 
     public isValidPosition(position: Position): boolean {
-        return position.x >= 0
-            && position.x < this.width
-            && position.y >= 0
-            && position.y < this.height;
+        const inBounds =
+            position.x >= 0 &&
+            position.x < this.width &&
+            position.y >= 0 &&
+            position.y < this.height;
+
+        if (!inBounds) return false;
+
+        const isWater = this.waterSources?.some(
+            w => w.x === position.x && w.y === position.y
+        );
+
+        return !isWater;
     }
 
     public deleteDeadEntities(): void {

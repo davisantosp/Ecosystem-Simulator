@@ -39,8 +39,21 @@ export class VisionSystem {
         return this.closestEntityTarget(animal, entitiesWithinRange);
     }
 
-    static searchForTerrain(animal: Animal, world: World, terrainType: TerrainTypes): Position {
-        throw new Error("Function not implemented");
+    static searchForWater(animal: Animal, world: World): Position | null {
+        if (!world.waterSources?.length) return null;
+
+        let closestWater: Position | null = null;
+        let minDistance = animal.visionRadius;
+
+        for (const waterPos of world.waterSources) {
+            const distance = Calculations.distanceBetween(animal.position, waterPos);
+            if (distance <= animal.visionRadius && distance < minDistance) {
+                minDistance = distance;
+                closestWater = waterPos;
+            }
+        }
+
+        return closestWater;
     }
 
     private static closestEntityTarget(animal: Animal, entities: LivingEntity[]): LivingEntity | null {
