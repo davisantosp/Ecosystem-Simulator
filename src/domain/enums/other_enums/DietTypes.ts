@@ -1,4 +1,4 @@
-export enum Diets {
+export enum DietTypes {
     HERBIVORE,
     CARNIVORE,
     OMNIVORE

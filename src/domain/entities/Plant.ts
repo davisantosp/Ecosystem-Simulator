@@ -13,8 +13,7 @@ export class Plant extends LivingEntity {
         id: ID,
         position: Position,
 
-        currentLifespan: number,
-        maxLifespan: number,
+        lifespan: ST,
         genes: Gene[],
         entityState: EntityState[],
 
@@ -26,7 +25,7 @@ export class Plant extends LivingEntity {
             id,
             position,
             LivingEntitiesTypes.PLANT,
-            currentLifespan, maxLifespan, genes, entityState
+            lifespan, genes, entityState
         );
     }
 }

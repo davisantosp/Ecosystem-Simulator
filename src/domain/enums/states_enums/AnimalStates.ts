@@ -1,7 +1,7 @@
 export enum AnimalStates {
-    NORMAL,
-    HUNGRY,
-    THIRSTY,
-    PROCREATING_SEASON,
-    DEAD
+    NORMAL = 1,
+    PROCREATING_SEASON = 2,
+    HUNGRY = 3,
+    THIRSTY = 4,
+    DEAD = 5,
 }
