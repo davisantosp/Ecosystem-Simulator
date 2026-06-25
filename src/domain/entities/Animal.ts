@@ -46,13 +46,15 @@ export class Animal extends LivingEntity implements AnimalActionsInterface {
         if (!world) throw new Error("World not created");
 
         this.lifespan.current--;
-        if (this.lifespan.current <= 0) {
+        this.hunger.current--;
+        this.thirst.current--;
+        if (this.lifespan.current <= 0 ||
+            this.hunger.current <= 0 ||
+            this.thirst.current <= 0
+        ) {
             this.die();
             return;
         }
-
-        this.hunger.current--;
-        this.thirst.current--;
 
         this.syncStates();
         MovementSystem.moveEntity(this, world);

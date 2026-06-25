@@ -66,17 +66,18 @@ export class Plant extends LivingEntity implements PlantActionsInterface {
         else
             maxNV = 100;
 
-        const seed = 0;
         const sprout = Math.floor(maxNV / 3);
         const mature = Math.floor((2 * maxNV) / 3);
-        if (currentNV >= mature)
+        if (currentNV >= mature) {
             this.updateState([PlantStates.MATURE]);
-        else if (currentNV >= sprout)
+            this.removeState([PlantStates.SPROUT, PlantStates.SEED]);
+        } else if (currentNV >= sprout) {
             this.updateState([PlantStates.SPROUT]);
-        else if (currentNV >= seed)
+            this.removeState([PlantStates.SEED, PlantStates.MATURE]);
+        } else {
             this.updateState([PlantStates.SEED]);
-        else
-            this.die();
+            this.removeState([PlantStates.SPROUT, PlantStates.MATURE]);
+        }
     }
 
 }
