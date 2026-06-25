@@ -48,10 +48,7 @@ export class Animal extends LivingEntity implements AnimalActionsInterface {
         this.lifespan.current--;
         this.hunger.current--;
         this.thirst.current--;
-        if (this.lifespan.current <= 0 ||
-            this.hunger.current <= 0 ||
-            this.thirst.current <= 0
-        ) {
+        if (this.lifespan.current <= 0 || this.hunger.current <= 0 || this.thirst.current <= 0) {
             this.die();
             return;
         }
@@ -77,6 +74,9 @@ export class Animal extends LivingEntity implements AnimalActionsInterface {
     }
     override getNutritionalValue(): number {
         return ANIMAL_NUTRITIONAL_VALUE_MAP[this.animalSpecie] || 50;
+    }
+    override die(): void {
+        this.updateState([AnimalStates.DEAD]);
     }
 
     eat(food: LivingEntity): void {

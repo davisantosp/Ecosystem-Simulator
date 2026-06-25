@@ -3,6 +3,8 @@ import { Animal } from "../../domain/entities/Animal";
 import { LivingEntity } from "../../domain/entities/LivingEntity";
 import { LivingEntitiesTypes } from "../../domain/enums/entities_enums/LivingEntitiesTypes";
 import { TerrainTypes } from "../../domain/enums/other_enums/TerrainTypes";
+import { AnimalStates } from "../../domain/enums/states_enums/AnimalStates";
+import { PlantStates } from "../../domain/enums/states_enums/PlantStates";
 import { Position } from "../../shared/types/Position";
 import { Calculations } from "../systems_functions/Calculations";
 
@@ -29,6 +31,8 @@ export class VisionSystem {
         const entitiesWithinRange = entitiesInWorld.filter(x =>
             isTargetType(x.entityType) &&
             x.id !== animal.id &&
+            !x.entityStates.includes(AnimalStates.DEAD) &&
+            !x.entityStates.includes(PlantStates.WITHERED) &&
             Calculations.distanceBetween(animal.position, x.position) <= animalVisionRange
         );
 

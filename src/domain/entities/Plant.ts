@@ -36,15 +36,16 @@ export class Plant extends LivingEntity implements PlantActionsInterface {
             this.die();
             return;
         }
-
-        // Update nutritionalValue
         this.photosynthesize();
-        // Update
         this.grow();
     }
     override getNutritionalValue(): number {
         return this.nutritionalValue.current;
     }
+    override die() {
+        this.updateState([PlantStates.WITHERED]);
+    }
+
     photosynthesize(): void {
         const foodProduction = Math.floor(this.growthRate.current / 10);
         const currentNV = this.nutritionalValue.current;

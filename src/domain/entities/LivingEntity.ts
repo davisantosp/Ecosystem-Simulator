@@ -5,8 +5,6 @@ import { LivingEntitiesTypes } from "../enums/entities_enums/LivingEntitiesTypes
 import { ID } from "../../shared/types/ID";
 import { ST } from "../../shared/types/ST";
 import { LivingEntityActionsInterface } from "../../shared/actions_interfaces/LivingEntityActionsInterface";
-import { PlantStates } from "../enums/states_enums/PlantStates";
-import { AnimalStates } from "../enums/states_enums/AnimalStates";
 
 export abstract class LivingEntity implements LivingEntityActionsInterface {
     constructor(
@@ -21,6 +19,7 @@ export abstract class LivingEntity implements LivingEntityActionsInterface {
 
     abstract update(): void;
     abstract getNutritionalValue(): number;
+    abstract die(): void;
 
     updateState(states: EntityState[]): void {
         if (!states) throw new Error("States array is required but was null or undefined");
@@ -37,13 +36,6 @@ export abstract class LivingEntity implements LivingEntityActionsInterface {
         if (genes)
             this.genes = genes;
     }
-    die(): void {
-        if (this.entityType === LivingEntitiesTypes.PLANT)
-            this.updateState([PlantStates.WITHERED]);
-        if (this.entityType === LivingEntitiesTypes.ANIMAL)
-            this.updateState([AnimalStates.DEAD]);
-    }
-
 
     static isOfType(livingEntity: LivingEntity, entityType: LivingEntitiesTypes): boolean {
         return (livingEntity.entityType == entityType)
