@@ -19,12 +19,8 @@ export abstract class LivingEntity implements LivingEntityActionsInterface {
         public entityStates: EntityState[]
     ) { }
 
-    update(): void {
-        throw new Error("No implementation for abstract classes");
-    }
-    getNutritionalValue(): number {
-        throw new Error("No implementation for abstract classes");
-    }
+    abstract update(): void;
+    abstract getNutritionalValue(): number;
 
     updateState(states: EntityState[]): void {
         if (!states) throw new Error("States array is required but was null or undefined");
@@ -32,6 +28,10 @@ export abstract class LivingEntity implements LivingEntityActionsInterface {
             if (!this.entityStates.includes(state))
                 this.entityStates.push(state)
         }
+    }
+    removeState(states: EntityState[]): void {
+        if (!states) throw new Error("States array is required but was null or undefined");
+        this.entityStates = this.entityStates.filter(s => !states.includes(s));
     }
     updateGenes(genes?: Gene[]): void {
         if (genes)

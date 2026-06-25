@@ -10,8 +10,10 @@ import { LivingEntitiesTypes } from "../enums/entities_enums/LivingEntitiesTypes
 import { ID } from "../../shared/types/ID";
 import { Diet } from "../../shared/types/Diet";
 import { AnimalActionsInterface } from "../../shared/actions_interfaces/AnimalActionsInterface";
-import { Plant } from "./Plant";
 import { ANIMAL_NUTRITIONAL_VALUE_MAP } from "../../shared/config/ecosystemConfig";
+import { World } from "../../core/World";
+import { MovementSystem } from "../../systems/movement/MovementSystem";
+import { AnimalStates } from "../enums/states_enums/AnimalStates";
 
 export class Animal extends LivingEntity implements AnimalActionsInterface {
     constructor(
@@ -40,14 +42,39 @@ export class Animal extends LivingEntity implements AnimalActionsInterface {
         );
     }
 
-    override update(): void {
+    override update(world?: World): void {
+        if (!world) throw new Error("World not created");
 
+        this.lifespan.current--;
+        if (this.lifespan.current <= 0) {
+            this.die();
+            return;
+        }
+
+        this.hunger.current--;
+        this.thirst.current--;
+
+        this.syncStates();
+        MovementSystem.moveEntity(this, world);
     }
+    private syncStates(): void {
+        const hungerRatio = this.hunger.current / (this.hunger.max ?? this.hunger.current);
+        const thirstRatio = this.thirst.current / (this.thirst.max ?? this.thirst.current);
 
+        if (hungerRatio < 0.4) {
+            this.updateState([AnimalStates.HUNGRY]);
+        } else {
+            this.removeState([AnimalStates.HUNGRY]);
+        }
+
+        if (thirstRatio < 0.4) {
+            this.updateState([AnimalStates.THIRSTY]);
+        } else {
+            this.removeState([AnimalStates.THIRSTY]);
+        }
+    }
     override getNutritionalValue(): number {
-        // Definindo valores nutricionais por espécie (isso pode vir de uma config externa depois)
-
-        return ANIMAL_NUTRITIONAL_VALUE_MAP[this.animalSpecie] || 50; // Valor padrão caso não listado
+        return ANIMAL_NUTRITIONAL_VALUE_MAP[this.animalSpecie] || 50;
     }
 
     eat(food: LivingEntity): void {

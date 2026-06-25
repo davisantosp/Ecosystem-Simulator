@@ -19,7 +19,7 @@ export class AnimalFactory {
             { current: 50, max: 50 },
             { current: 50, max: 50 },
             { current: 50, max: 50 },
-            { type: DietTypes.HERBIVORE, food: [] },
+            { type: DietTypes.HERBIVORE },
             1,
             1
         );
@@ -37,7 +37,7 @@ export class AnimalFactory {
             { current: 50, max: 50 },
             { current: 50, max: 50 },
             { current: 50, max: 50 },
-            { type: DietTypes.CARNIVORE, food: [Animal as unknown as LivingEntity] },
+            { type: DietTypes.CARNIVORE },
             5,
             10
         );
@@ -55,7 +55,7 @@ export class AnimalFactory {
             { current: 25, max: 25 },
             { current: 25, max: 25 },
             { current: 50, max: 50 },
-            { type: DietTypes.HERBIVORE, food: [Plant as unknown as LivingEntity] },
+            { type: DietTypes.HERBIVORE },
             2,
             4
         );
@@ -73,7 +73,7 @@ export class AnimalFactory {
             { current: 75, max: 75 },
             { current: 75, max: 75 },
             { current: 125, max: 125 },
-            { type: DietTypes.HERBIVORE, food: [Plant as unknown as LivingEntity] },
+            { type: DietTypes.HERBIVORE },
             4,
             8
         );

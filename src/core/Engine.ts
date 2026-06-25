@@ -34,7 +34,7 @@ export class Engine {
         console.log("Engine stopped.");
     }
 
-    public update(world: World) {
+    public update() {
         if (this.isRunning) {
             this.currentTick++;
         }
@@ -44,24 +44,24 @@ export class Engine {
 
         console.log(`Tick: ${this.currentTick}`);
 
-        const livingPlants: Plant[] = (world.livingEntities?.filter(x => x.entityType === LivingEntitiesTypes.PLANT) ?? []) as Plant[];
-        const livingAnimals: Animal[] = (world.livingEntities?.filter(x => x.entityType === LivingEntitiesTypes.ANIMAL) ?? []) as Animal[];
+        const livingPlants: Plant[] = (this.world.livingEntities?.filter(x => x.entityType === LivingEntitiesTypes.PLANT) ?? []) as Plant[];
+        const livingAnimals: Animal[] = (this.world.livingEntities?.filter(x => x.entityType === LivingEntitiesTypes.ANIMAL) ?? []) as Animal[];
         TurnManager.organizeAnimalsActionOrder(livingAnimals);
 
         for (const animal of livingAnimals) {
-            animal.update();
             if (animal.entityStates.includes(AnimalStates.DEAD)) {
                 continue;
             }
+            animal.update(this.world);
         }
 
         for (const plant of livingPlants) {
-            plant.update();
             if (plant.entityStates.includes(PlantStates.WITHERED)) {
                 continue;
             }
+            plant.update();
         }
 
-        world.deleteDeadEntities();
+        this.world.deleteDeadEntities();
     }
 }

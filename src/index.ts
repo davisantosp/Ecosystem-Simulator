@@ -18,5 +18,5 @@ const intervalId = setInterval(() => {
         clearInterval(intervalId);
         return;
     }
-    engine.update(world);
+    engine.update();
 }, engine.tickRate);

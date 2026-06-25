@@ -17,9 +17,10 @@ export class RandomlyMove implements MovementStrategyInterface {
             { direction: "West", value: 4 },
         ]
 
-        let newPosition: Position;
-        while (true) {
-            newPosition = { x: currentPosition.x, y: currentPosition.y }
+        let newPosition: Position = { ...currentPosition };
+        let attemps = 0;
+        while (attemps++ < 50) {
+            newPosition = { ...currentPosition }
 
             for (let i = animal.speed; i > 0; i--) {
                 const direction = DIRECTIONS[Math.floor(Math.random() * DIRECTIONS.length)]?.direction;
@@ -36,7 +37,7 @@ export class RandomlyMove implements MovementStrategyInterface {
             }
         }
         // Will be changed to a function later
-        animal.position = newPosition
+        animal.position = newPosition;
         return true;
     }
 }

@@ -38,7 +38,7 @@ describe("LivingEntity.updateState", () => {
 describe("LivingEntity.updateGenes", () => {
     it("should replace genes when provided", () => {
         const animal = AnimalFactory.createGeneric({ genes: [] });
-        const newGenes = [{ id: "g1", geneType: {} as any, geneModification: () => {} }];
+        const newGenes = [{ id: "g1", geneType: {} as any, geneModification: () => { } }];
 
         animal.updateGenes(newGenes);
 
@@ -46,7 +46,7 @@ describe("LivingEntity.updateGenes", () => {
     });
 
     it("should not change genes when undefined", () => {
-        const originalGenes = [{ id: "g1", geneType: {} as any, geneModification: () => {} }];
+        const originalGenes = [{ id: "g1", geneType: {} as any, geneModification: () => { } }];
         const animal = AnimalFactory.createGeneric({ genes: originalGenes });
 
         animal.updateGenes();
@@ -88,5 +88,34 @@ describe("LivingEntity.isOfType", () => {
         const result = LivingEntity.isOfType(plant, LivingEntitiesTypes.ANIMAL);
 
         expect(result).toBe(false);
+    });
+});
+
+describe("LivingEntity.removeState", () => {
+    it("should remove an existing state", () => {
+        const animal = AnimalFactory.createGeneric({
+            entityStates: [AnimalStates.NORMAL, AnimalStates.HUNGRY]
+        });
+
+        animal.removeState([AnimalStates.HUNGRY]);
+
+        expect(animal.entityStates).not.toContain(AnimalStates.HUNGRY);
+        expect(animal.entityStates).toContain(AnimalStates.NORMAL);
+    });
+
+    it("should do nothing when state is not present", () => {
+        const animal = AnimalFactory.createGeneric({
+            entityStates: [AnimalStates.NORMAL]
+        });
+
+        expect(() => animal.removeState([AnimalStates.HUNGRY])).not.toThrow();
+        expect(animal.entityStates).toEqual([AnimalStates.NORMAL]);
+    });
+
+    it("should throw when states is null", () => {
+        const animal = AnimalFactory.createGeneric();
+
+        expect(() => animal.removeState(null as any))
+            .toThrow("States array is required but was null or undefined");
     });
 });
