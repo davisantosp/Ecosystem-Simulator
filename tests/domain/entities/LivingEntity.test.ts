@@ -56,7 +56,7 @@ describe("LivingEntity.removeState", () => {
 describe("LivingEntity.updateGenes", () => {
     it("should replace genes when provided", () => {
         const animal = AnimalFactory.createGeneric({ genes: [] });
-        const newGenes = [{ id: "g1", geneType: {} as any, geneModification: () => {} }];
+        const newGenes = [{ id: "g1", geneType: {} as any, geneModification: () => { } }];
 
         animal.updateGenes(newGenes);
 
@@ -64,7 +64,7 @@ describe("LivingEntity.updateGenes", () => {
     });
 
     it("should not change genes when undefined", () => {
-        const originalGenes = [{ id: "g1", geneType: {} as any, geneModification: () => {} }];
+        const originalGenes = [{ id: "g1", geneType: {} as any, geneModification: () => { } }];
         const animal = AnimalFactory.createGeneric({ genes: originalGenes });
 
         animal.updateGenes();
