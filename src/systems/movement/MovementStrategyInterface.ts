@@ -1,6 +1,6 @@
 import { World } from "../../core/World";
-import { LivingEntity } from "../../domain/entities/LivingEntity";
+import { Animal } from "../../domain/entities/Animal";
 
 export interface MovementStrategyInterface {
-    entityMove(livingEntity: LivingEntity, world: World): boolean;
+    entityMove(animal: Animal, world: World): boolean;
 }

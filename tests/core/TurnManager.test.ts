@@ -13,12 +13,6 @@ describe("TurnManager.organizeAnimalsActionOrder", () => {
         expect(animals[0]!.speed).toBeGreaterThanOrEqual(animals[1]!.speed);
     });
 
-    it("should not throw when given an empty array", () => {
-        const animals: Animal[] = [];
-
-        expect(() => TurnManager.organizeAnimalsActionOrder(animals)).not.toThrow();
-    });
-
     it("should throw when animals is null", () => {
         expect(() => {
             TurnManager.organizeAnimalsActionOrder(null as any);

@@ -1,6 +1,5 @@
 import { World } from "../../src/core/World";
-import { AnimalStates } from "../../src/domain/enums/states_enums/AnimalStates";
-import { PlantStates } from "../../src/domain/enums/states_enums/PlantStates";
+import { AnimalStates, PlantStates } from "../../src/domain/enums";
 import { AnimalFactory } from "../factories/AnimalFactory";
 import { PlantFactory } from "../factories/PlantFactory";
 

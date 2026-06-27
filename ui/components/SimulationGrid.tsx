@@ -2,10 +2,7 @@ import { useMemo } from "react";
 import { World } from "../../src/core/World";
 import { Animal } from "../../src/domain/entities/Animal";
 import { Plant } from "../../src/domain/entities/Plant";
-import { AnimalSpecies } from "../../src/domain/enums/entities_enums/AnimalSpecies";
-import { AnimalStates } from "../../src/domain/enums/states_enums/AnimalStates";
-import { PlantStates } from "../../src/domain/enums/states_enums/PlantStates";
-import { PlantSpecies } from "../../src/domain/enums/entities_enums/PlantSpecies";
+import { AnimalSpecies, AnimalStates, PlantStates, PlantSpecies } from "../../src/domain/enums";
 
 const ANIMAL_EMOJIS: Record<number, string> = {
   [AnimalSpecies.RABBIT]: "🐇",
@@ -79,7 +76,7 @@ export default function SimulationGrid({
 
       if (entity.entityType === 1) {
         const animal = entity as Animal;
-        const specie = animal.animalSpecie;
+        const specie = animal.animalSpecies;
         cell.type = "animal";
         cell.emoji = ANIMAL_EMOJIS[specie] ?? "?";
         cell.entityId = animal.id;

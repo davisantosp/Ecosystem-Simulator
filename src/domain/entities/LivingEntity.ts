@@ -1,10 +1,9 @@
 import { Gene } from "../../shared/types/Gene";
-import { EntityState } from "../enums/states_enums/EntityState";
+import { EntityState, LivingEntitiesTypes } from "../enums";
 import { Position } from "../../shared/types/Position";
-import { LivingEntitiesTypes } from "../enums/entities_enums/LivingEntitiesTypes";
 import { ID } from "../../shared/types/ID";
-import { ST } from "../../shared/types/ST";
-import { LivingEntityActionsInterface } from "../../shared/actions_interfaces/LivingEntityActionsInterface";
+import { StatValue } from "../../shared/types/StatValue";
+import { LivingEntityActionsInterface } from "../../shared/interfaces/LivingEntityActionsInterface";
 
 export abstract class LivingEntity implements LivingEntityActionsInterface {
     constructor(
@@ -12,7 +11,7 @@ export abstract class LivingEntity implements LivingEntityActionsInterface {
         public position: Position,
         public readonly entityType: LivingEntitiesTypes,
 
-        public lifespan: ST,
+        public lifespan: StatValue,
         public genes: Gene[],
         public entityStates: EntityState[]
     ) { }

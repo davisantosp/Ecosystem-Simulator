@@ -1,4 +1,4 @@
-import { GeneTypes } from "../../domain/enums/other_enums/GeneTypes";
+import { GeneTypes } from "../../domain/enums/other/GeneTypes";
 
 export type Gene = {
     id: string,

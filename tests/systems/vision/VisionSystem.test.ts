@@ -1,9 +1,6 @@
 import { World } from "../../../src/core/World";
 import { Animal } from "../../../src/domain/entities/Animal";
-import { AnimalSpecies } from "../../../src/domain/enums/entities_enums/AnimalSpecies";
-import { LivingEntitiesTypes } from "../../../src/domain/enums/entities_enums/LivingEntitiesTypes";
-import { AnimalStates } from "../../../src/domain/enums/states_enums/AnimalStates";
-import { PlantStates } from "../../../src/domain/enums/states_enums/PlantStates";
+import { AnimalSpecies, LivingEntitiesTypes, AnimalStates, PlantStates } from "../../../src/domain/enums";
 import { VisionSystem } from "../../../src/systems/vision/VisionSystem";
 import { AnimalFactory } from "../../factories/AnimalFactory";
 import { PlantFactory } from "../../factories/PlantFactory";
@@ -223,7 +220,7 @@ describe("VisionSystem.searchForMate", () => {
         const mate = VisionSystem.searchForMate(animal, world);
 
         expect(mate).not.toBeNull();
-        expect(mate!.animalSpecie).toBe(AnimalSpecies.RABBIT);
+        expect(mate!.animalSpecies).toBe(AnimalSpecies.RABBIT);
     });
 
     it("should not find a mate of a different species", () => {

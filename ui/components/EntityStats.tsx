@@ -3,7 +3,7 @@ export default function EntityStats({
 }: {
   entity: {
     id: string;
-    specie: string;
+    species: string;
     state: string;
     hunger: string;
     thirst: string;
@@ -29,7 +29,7 @@ export default function EntityStats({
       </div>
       <div className="stat-row">
         <span className="stat-label">Species:</span>
-        <span className="stat-value">{entity.specie}</span>
+        <span className="stat-value">{entity.species}</span>
       </div>
       <div className="stat-row">
         <span className="stat-label">Position:</span>

@@ -1,5 +1,5 @@
 import { Plant } from "../../../src/domain/entities/Plant";
-import { PlantStates } from "../../../src/domain/enums/states_enums/PlantStates";
+import { PlantStates } from "../../../src/domain/enums";
 import { PlantFactory } from "../../factories/PlantFactory";
 
 describe("Plant.getNutritionalValue", () => {

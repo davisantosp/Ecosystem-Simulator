@@ -1,11 +1,9 @@
 import { World } from "../../core/World";
 import { Animal } from "../../domain/entities/Animal";
 import { LivingEntity } from "../../domain/entities/LivingEntity";
-import { LivingEntitiesTypes } from "../../domain/enums/entities_enums/LivingEntitiesTypes";
-import { AnimalStates } from "../../domain/enums/states_enums/AnimalStates";
-import { PlantStates } from "../../domain/enums/states_enums/PlantStates";
+import { LivingEntitiesTypes, AnimalStates, PlantStates } from "../../domain/enums";
 import { Position } from "../../shared/types/Position";
-import { Calculations } from "../systems_functions/Calculations";
+import { Calculations } from "../utils/Calculations";
 
 export class VisionSystem {
     static searchForTarget(
@@ -63,7 +61,7 @@ export class VisionSystem {
         const entitiesWithinRange = entitiesInWorld.filter(x =>
             x.id !== animal.id &&
             x.entityType === LivingEntitiesTypes.ANIMAL &&
-            (x as Animal).animalSpecie === animal.animalSpecie &&
+            (x as Animal).animalSpecies === animal.animalSpecies &&
             x.entityStates.includes(AnimalStates.PROCREATING_SEASON) &&
             !x.entityStates.includes(AnimalStates.DEAD) &&
             Calculations.distanceBetween(animal.position, x.position) <= animalVisionRange

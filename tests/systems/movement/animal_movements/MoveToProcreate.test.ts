@@ -1,6 +1,6 @@
 import { World } from "../../../../src/core/World";
 import { Animal } from "../../../../src/domain/entities/Animal";
-import { AnimalStates } from "../../../../src/domain/enums/states_enums/AnimalStates";
+import { AnimalStates } from "../../../../src/domain/enums";
 import { MoveToProcreate } from "../../../../src/systems/movement/animal_movements/MoveToProcreate";
 import { AnimalFactory } from "../../../factories/AnimalFactory";
 import { CoreFactory } from "../../../factories/CoreFactory";

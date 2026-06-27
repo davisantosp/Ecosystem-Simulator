@@ -1,8 +1,7 @@
 import { World } from "../../../../src/core/World";
 import { Animal } from "../../../../src/domain/entities/Animal";
 import { Plant } from "../../../../src/domain/entities/Plant";
-import { PlantStates } from "../../../../src/domain/enums/states_enums/PlantStates";
-import { DietTypes } from "../../../../src/domain/enums/other_enums/DietTypes";
+import { PlantStates, DietTypes } from "../../../../src/domain/enums";
 import { SearchFood } from "../../../../src/systems/movement/animal_movements/SearchFood";
 import { AnimalFactory } from "../../../factories/AnimalFactory";
 import { PlantFactory } from "../../../factories/PlantFactory";

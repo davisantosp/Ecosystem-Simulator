@@ -1,26 +1,23 @@
-import { PlantSpecies } from "../enums/entities_enums/PlantSpecies";
-import { PlantStates } from "../enums/states_enums/PlantStates";
-import { ST } from "../../shared/types/ST";
+import { PlantSpecies, PlantStates, EntityState, LivingEntitiesTypes } from "../enums";
+import { StatValue } from "../../shared/types/StatValue";
 import { LivingEntity } from "./LivingEntity";
 import { Position } from "../../shared/types/Position";
 import { Gene } from "../../shared/types/Gene";
-import { EntityState } from "../enums/states_enums/EntityState";
-import { LivingEntitiesTypes } from "../enums/entities_enums/LivingEntitiesTypes";
 import { ID } from "../../shared/types/ID";
-import { PlantActionsInterface } from "../../shared/actions_interfaces/PlantActionsInterface";
+import { PlantActionsInterface } from "../../shared/interfaces/PlantActionsInterface";
 
 export class Plant extends LivingEntity implements PlantActionsInterface {
     constructor(
         id: ID,
         position: Position,
 
-        lifespan: ST,
+        lifespan: StatValue,
         genes: Gene[],
         entityState: EntityState[],
 
         public readonly plantSpecies: PlantSpecies,
-        public growthRate: ST,
-        public nutritionalValue: ST,
+        public growthRate: StatValue,
+        public nutritionalValue: StatValue,
     ) {
         super(
             id,

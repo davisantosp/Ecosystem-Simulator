@@ -1,11 +1,7 @@
 import { Animal } from "../../../src/domain/entities/Animal";
-import { AnimalSpecies } from "../../../src/domain/enums/entities_enums/AnimalSpecies";
-import { AnimalStates } from "../../../src/domain/enums/states_enums/AnimalStates";
-import { PlantStates } from "../../../src/domain/enums/states_enums/PlantStates";
-import { World } from "../../../src/core/World";
+import { AnimalSpecies, AnimalStates, PlantStates } from "../../../src/domain/enums";
 import { PlantFactory } from "../../factories/PlantFactory";
 import { AnimalFactory } from "../../factories/AnimalFactory";
-import { CoreFactory } from "../../factories/CoreFactory";
 
 describe("Animal.getNutritionalValue", () => {
     it("should return a numeric value based on species", () => {
@@ -103,16 +99,10 @@ describe("Animal.die", () => {
 });
 
 describe("Animal.update", () => {
-    let world: World;
-
-    beforeEach(() => {
-        world = CoreFactory.createWorld({ width: 20, height: 20 });
-    });
-
     it("should decrement lifespan each tick", () => {
         const animal = AnimalFactory.createRabbit({ lifespan: { current: 10, max: 10 } });
 
-        animal.update(world);
+        animal.update();
 
         expect(animal.lifespan.current).toBe(9);
     });
@@ -120,7 +110,7 @@ describe("Animal.update", () => {
     it("should decrement hunger each tick", () => {
         const animal = AnimalFactory.createRabbit({ hunger: { current: 50, max: 100 } });
 
-        animal.update(world);
+        animal.update();
 
         expect(animal.hunger.current).toBe(49);
     });
@@ -128,7 +118,7 @@ describe("Animal.update", () => {
     it("should decrement thirst each tick", () => {
         const animal = AnimalFactory.createRabbit({ thirst: { current: 50, max: 100 } });
 
-        animal.update(world);
+        animal.update();
 
         expect(animal.thirst.current).toBe(49);
     });
@@ -139,17 +129,9 @@ describe("Animal.update", () => {
             entityStates: [AnimalStates.NORMAL],
         });
 
-        animal.update(world);
+        animal.update();
 
         expect(animal.entityStates).toContain(AnimalStates.DEAD);
-    });
-
-    it("should throw when world is not provided", () => {
-        const animal = AnimalFactory.createRabbit();
-
-        expect(() => {
-            (animal as any).update();
-        }).toThrow("World not created");
     });
 });
 

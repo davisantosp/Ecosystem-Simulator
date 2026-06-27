@@ -3,7 +3,7 @@ import { PlantFactory } from "../tests/factories/PlantFactory";
 import { Engine } from "./core/Engine";
 import { World } from "./core/World";
 import { Distance } from "./shared/types/Distance";
-import { Random } from "./systems/systems_functions/Random";
+import { Random } from "./systems/utils/Random";
 import { ConsoleRenderer } from "./ui/ConsoleRenderer";
 
 const worldWidth: Distance = 15;

@@ -1,8 +1,8 @@
 import { World } from "../../core/World";
 import { Animal } from "../../domain/entities/Animal";
-import { AnimalStates } from "../../domain/enums/states_enums/AnimalStates";
+import { AnimalStates } from "../../domain/enums";
 import { Position } from "../../shared/types/Position";
-import { Random } from "../systems_functions/Random";
+import { Random } from "../utils/Random";
 
 export class ReproductionSystem {
 
@@ -32,7 +32,7 @@ export class ReproductionSystem {
             { current: avgStat(animal1.lifespan.max ?? 150, animal2.lifespan.max ?? 150), max: avgStat(animal1.lifespan.max ?? 150, animal2.lifespan.max ?? 150) },
             [],
             [AnimalStates.NORMAL],
-            animal1.animalSpecie,
+            animal1.animalSpecies,
             { current: avgStat(animal1.hunger.max ?? 50, animal2.hunger.max ?? 50), max: avgStat(animal1.hunger.max ?? 100, animal2.hunger.max ?? 100) },
             { current: animal2.thirst.max ?? 50, max: animal1.thirst.max ?? 100 },
             { current: animal2.procreation.max ?? 100, min: animal1.procreation.min ?? 1, max: animal2.procreation.max ?? 100 },

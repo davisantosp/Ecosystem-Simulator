@@ -1,6 +1,4 @@
-import { AnimalSpecies } from "../../domain/enums/entities_enums/AnimalSpecies";
-import { LivingEntitiesTypes } from "../../domain/enums/entities_enums/LivingEntitiesTypes";
-import { DietTypes } from "../../domain/enums/other_enums/DietTypes";
+import { AnimalSpecies, LivingEntitiesTypes, DietTypes } from "../../domain/enums";
 
 // O Readonly garante que ninguém altere o mapa em tempo de execução
 export const DIET_FOOD_PREFERENCE_MAP: Readonly<Record<DietTypes, LivingEntitiesTypes | LivingEntitiesTypes[]>> = {
@@ -14,3 +12,9 @@ export const ANIMAL_NUTRITIONAL_VALUE_MAP: Record<AnimalSpecies, number> = {
     [AnimalSpecies.WOLF]: 200,
     [AnimalSpecies.MOOSE]: 400
 };
+
+export const ANIMAL_STATE_THRESHOLDS = {
+    HUNGER_CRITICAL: 0.4,
+    THIRST_CRITICAL: 0.4,
+    PROCREATION_READY: 0.3,
+} as const;

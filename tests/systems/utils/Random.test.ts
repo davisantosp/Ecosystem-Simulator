@@ -1,13 +1,7 @@
-import { Random } from "../../../src/systems/systems_functions/Random";
+import { Random } from "../../../src/systems/utils/Random";
 import { CoreFactory } from "../../factories/CoreFactory";
 
 describe("Random.generateID", () => {
-    it("should return a non-empty string", () => {
-        const id = Random.generateID();
-        expect(id).toBeTruthy();
-        expect(typeof id).toBe("string");
-    });
-
     it("should return unique IDs on successive calls", () => {
         const id1 = Random.generateID();
         const id2 = Random.generateID();

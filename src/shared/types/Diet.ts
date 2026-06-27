@@ -1,4 +1,4 @@
-import { DietTypes } from "../../domain/enums/other_enums/DietTypes"
+import { DietTypes } from "../../domain/enums"
 
 export type Diet = {
     type: DietTypes,

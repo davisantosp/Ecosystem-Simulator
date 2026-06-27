@@ -1,7 +1,7 @@
 import { Plant } from "../../src/domain/entities/Plant";
-import { PlantSpecies } from "../../src/domain/enums/entities_enums/PlantSpecies";
-import { PlantStates } from "../../src/domain/enums/states_enums/PlantStates";
-import { Random } from "../../src/systems/systems_functions/Random";
+import { PlantSpecies } from "../../src/domain/enums/entities/PlantSpecies";
+import { PlantStates } from "../../src/domain/enums/states/PlantStates";
+import { Random } from "../../src/systems/utils/Random";
 
 export class PlantFactory {
     static createGeneric(overrides?: Partial<Plant>): Plant {

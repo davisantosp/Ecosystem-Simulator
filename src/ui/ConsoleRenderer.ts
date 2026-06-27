@@ -1,8 +1,7 @@
 import { World } from "../core/World";
 import { Animal } from "../domain/entities/Animal";
 import { Plant } from "../domain/entities/Plant";
-import { AnimalSpecies } from "../domain/enums/entities_enums/AnimalSpecies";
-import { LivingEntitiesTypes } from "../domain/enums/entities_enums/LivingEntitiesTypes";
+import { AnimalSpecies, LivingEntitiesTypes } from "../domain/enums";
 
 export class ConsoleRenderer {
     static render(world: World, tick: number): void {
@@ -20,11 +19,11 @@ export class ConsoleRenderer {
         for (const entity of world.livingEntities ?? []) {
             const { x, y } = entity.position;
             if (entity.entityType === LivingEntitiesTypes.ANIMAL) {
-                if ((entity as Animal).animalSpecie === AnimalSpecies.MOOSE)
+                if ((entity as Animal).animalSpecies === AnimalSpecies.MOOSE)
                     grid[y]![x] = "M";
-                else if ((entity as Animal).animalSpecie === AnimalSpecies.WOLF)
+                else if ((entity as Animal).animalSpecies === AnimalSpecies.WOLF)
                     grid[y]![x] = "W";
-                else if ((entity as Animal).animalSpecie === AnimalSpecies.RABBIT)
+                else if ((entity as Animal).animalSpecies === AnimalSpecies.RABBIT)
                     grid[y]![x] = "R";
             } else {
                 grid[y]![x] = "P";
@@ -52,7 +51,7 @@ export class ConsoleRenderer {
         console.log(`Animals: ${animals.length}  Plants: ${plants.length}`);
         for (const a of animals) {
             console.log(
-                `[${a.animalSpecie}] pos:(${a.position.x},${a.position.y}) ` +
+                `[${a.animalSpecies}] pos:(${a.position.x},${a.position.y}) ` +
                 `hunger:${a.hunger.current}/${a.hunger.max} ` +
                 `thirst:${a.thirst.current}/${a.thirst.max} ` +
                 `states:[${a.entityStates.join(", ")}]`

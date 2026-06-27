@@ -1,19 +1,20 @@
 import { Animal } from "../domain/entities/Animal";
 import { Plant } from "../domain/entities/Plant";
-import { LivingEntitiesTypes } from "../domain/enums/entities_enums/LivingEntitiesTypes";
-import { AnimalStates } from "../domain/enums/states_enums/AnimalStates";
-import { PlantStates } from "../domain/enums/states_enums/PlantStates";
+import { LivingEntitiesTypes, AnimalStates, PlantStates } from "../domain/enums";
+import { MovementSystem } from "../systems/movement/MovementSystem";
 import { TurnManager } from "./TurnManager";
 import { World } from "./World";
 
 export class Engine {
     public world: World;
     public isRunning: boolean = false;
-    public currentTick: number = 0;
-    public tickRate: number = 1000; // 1 second
+    public currentTick: number;
+    public tickRate: number;
 
-    constructor(world: World) {
+    constructor(world: World, tickRate: number) {
         this.world = world;
+        this.tickRate = tickRate / 1000; // To be in seconds
+        this.currentTick = 0;
     }
 
     public start() {
@@ -52,7 +53,8 @@ export class Engine {
             if (animal.entityStates.includes(AnimalStates.DEAD)) {
                 continue;
             }
-            animal.update(this.world);
+            animal.update();
+            MovementSystem.moveEntity(animal, this.world);
         }
 
         for (const plant of livingPlants) {

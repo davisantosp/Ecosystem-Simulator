@@ -1,6 +1,6 @@
 import { World } from "../../../core/World";
 import { Animal } from "../../../domain/entities/Animal";
-import { LivingEntitiesTypes } from "../../../domain/enums/entities_enums/LivingEntitiesTypes";
+import { LivingEntitiesTypes } from "../../../domain/enums";
 import { DIET_FOOD_PREFERENCE_MAP } from "../../../shared/config/ecosystemConfig";
 import { Position } from "../../../shared/types/Position";
 import { VisionSystem } from "../../vision/VisionSystem";

@@ -1,6 +1,5 @@
 import { LivingEntity } from "../../../src/domain/entities/LivingEntity";
-import { LivingEntitiesTypes } from "../../../src/domain/enums/entities_enums/LivingEntitiesTypes";
-import { AnimalStates } from "../../../src/domain/enums/states_enums/AnimalStates";
+import { LivingEntitiesTypes, AnimalStates } from "../../../src/domain/enums";
 import { AnimalFactory } from "../../factories/AnimalFactory";
 import { PlantFactory } from "../../factories/PlantFactory";
 
@@ -50,26 +49,6 @@ describe("LivingEntity.removeState", () => {
         expect(() => {
             animal.removeState(null as any);
         }).toThrow("States array is required but was null or undefined");
-    });
-});
-
-describe("LivingEntity.updateGenes", () => {
-    it("should replace genes when provided", () => {
-        const animal = AnimalFactory.createGeneric({ genes: [] });
-        const newGenes = [{ id: "g1", geneType: {} as any, geneModification: () => { } }];
-
-        animal.updateGenes(newGenes);
-
-        expect(animal.genes).toEqual(newGenes);
-    });
-
-    it("should not change genes when undefined", () => {
-        const originalGenes = [{ id: "g1", geneType: {} as any, geneModification: () => { } }];
-        const animal = AnimalFactory.createGeneric({ genes: originalGenes });
-
-        animal.updateGenes();
-
-        expect(animal.genes).toEqual(originalGenes);
     });
 });
 

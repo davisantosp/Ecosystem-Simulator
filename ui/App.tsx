@@ -4,10 +4,8 @@ import { TurnManager } from "../src/core/TurnManager";
 import { World } from "../src/core/World";
 import { Animal } from "../src/domain/entities/Animal";
 import { Plant } from "../src/domain/entities/Plant";
-import { AnimalStates } from "../src/domain/enums/states_enums/AnimalStates";
-import { PlantStates } from "../src/domain/enums/states_enums/PlantStates";
-import { PlantSpecies } from "../src/domain/enums/entities_enums/PlantSpecies";
-import { Random } from "../src/systems/systems_functions/Random";
+import { AnimalStates, PlantStates, PlantSpecies, AnimalSpecies } from "../src/domain/enums";
+import { Random } from "../src/systems/utils/Random";
 import { AnimalFactory } from "../tests/factories/AnimalFactory";
 import { PlantFactory } from "../tests/factories/PlantFactory";
 import SimulationGrid from "./components/SimulationGrid";
@@ -18,7 +16,7 @@ import ConfigMenu, { DEFAULT_CONFIG, type SimConfig } from "./components/ConfigM
 
 type EntityInfo = {
   id: string;
-  specie: string;
+  species: string;
   state: string;
   hunger: string;
   thirst: string;
@@ -83,7 +81,7 @@ export default function App() {
     TurnManager.organizeAnimalsActionOrder(aliveAnimals);
 
     for (const animal of aliveAnimals) {
-      animal.update(world);
+      animal.update();
     }
     for (const plant of alivePlants) {
       plant.update();
@@ -151,7 +149,7 @@ export default function App() {
       const a = entity as Animal;
       return {
         id: a.id,
-        specie: AnimalSpecies[a.animalSpecie],
+        species: AnimalSpecies[a.animalSpecies],
         state: a.entityStates
           .map((s) => AnimalStates[s] ?? PlantStates[s])
           .join(", "),
@@ -168,7 +166,7 @@ export default function App() {
       .join(", ");
     return {
       id: p.id,
-      specie: PlantSpecies[p.plantSpecies],
+      species: PlantSpecies[p.plantSpecies],
       state: stateName || "NORMAL",
       hunger: "-",
       thirst: "-",

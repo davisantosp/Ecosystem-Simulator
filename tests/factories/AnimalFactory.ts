@@ -2,10 +2,10 @@ import { World } from "../../src/core/World";
 import { Animal } from "../../src/domain/entities/Animal";
 import { LivingEntity } from "../../src/domain/entities/LivingEntity";
 import { Plant } from "../../src/domain/entities/Plant";
-import { AnimalSpecies } from "../../src/domain/enums/entities_enums/AnimalSpecies";
-import { DietTypes } from "../../src/domain/enums/other_enums/DietTypes";
-import { AnimalStates } from "../../src/domain/enums/states_enums/AnimalStates";
-import { Random } from "../../src/systems/systems_functions/Random";
+import { AnimalSpecies } from "../../src/domain/enums/entities/AnimalSpecies";
+import { DietTypes } from "../../src/domain/enums/other/DietTypes";
+import { AnimalStates } from "../../src/domain/enums/states/AnimalStates";
+import { Random } from "../../src/systems/utils/Random";
 
 export class AnimalFactory {
     static createGeneric(overrides?: Partial<Animal>): Animal {

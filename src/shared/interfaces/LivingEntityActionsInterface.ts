@@ -1,4 +1,4 @@
-import { EntityState } from "../../domain/enums/states_enums/EntityState";
+import { EntityState } from "../../domain/enums";
 import { Gene } from "../types/Gene";
 
 export interface LivingEntityActionsInterface {
