@@ -3,6 +3,7 @@ import { Animal } from "../../../domain/entities/Animal";
 import { Position } from "../../../shared/types/Position";
 import { VisionSystem } from "../../vision/VisionSystem";
 import { MovementStrategyInterface } from "../MovementStrategyInterface";
+import { PathfindingSystem } from "../../pathfinding/PathFindingSystem";
 
 export class SearchWater implements MovementStrategyInterface {
 
@@ -18,28 +19,17 @@ export class SearchWater implements MovementStrategyInterface {
             return true;
         }
 
+        const destination = PathfindingSystem.closestAdjacentValid(animal.position, target, world);
+        if (!destination) return false;
+
         for (let steps = animal.speed; steps > 0; steps--) {
             if (isAdjacent(animal.position)) break;
-
-            let newPosition: Position = { ...animal.position };
-            if (target.x > animal.position.x)
-                newPosition.x++;
-            else if (target.x < animal.position.x)
-                newPosition.x--;
-            else if (target.y > animal.position.y)
-                newPosition.y++;
-            else if (target.y < animal.position.y)
-                newPosition.y--;
-
-            if (world.isValidPosition(newPosition)) {
-                animal.position = newPosition;
-            } else {
-                break;
-            }
+            const next = PathfindingSystem.nextStep(animal.position, destination, world);
+            if (!next) break;
+            animal.position = next;
         }
 
-        if (isAdjacent(animal.position))
-            animal.drink();
+        if (isAdjacent(animal.position)) animal.drink();
         return true;
     }
 }

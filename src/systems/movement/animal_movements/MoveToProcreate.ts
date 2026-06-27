@@ -4,6 +4,7 @@ import { Position } from "../../../shared/types/Position";
 import { ReproductionSystem } from "../../reproduction/ReproductionSystem";
 import { VisionSystem } from "../../vision/VisionSystem";
 import { MovementStrategyInterface } from "../MovementStrategyInterface";
+import { PathfindingSystem } from "../../pathfinding/PathFindingSystem";
 
 export class MoveToProcreate implements MovementStrategyInterface {
 
@@ -11,34 +12,24 @@ export class MoveToProcreate implements MovementStrategyInterface {
         const mate = VisionSystem.searchForMate(animal, world);
         if (!mate) return false;
 
-
-        const matePosition: Position = { ...mate.position };
         const isAdjacent = (pos: Position) =>
-            Math.abs(pos.x - matePosition.x) + Math.abs(pos.y - matePosition.y) === 1;
+            Math.abs(pos.x - mate.position.x) + Math.abs(pos.y - mate.position.y) === 1;
 
         if (isAdjacent(animal.position)) {
             ReproductionSystem.procreate(animal, mate, world);
             return true;
         }
 
+        const destination = PathfindingSystem.closestAdjacentValid(
+            animal.position, mate.position, world
+        );
+        if (!destination) return false;
+
         for (let steps = animal.speed; steps > 0; steps--) {
             if (isAdjacent(animal.position)) break;
-
-            let newPosition: Position = { ...animal.position };
-            if (matePosition.x > animal.position.x)
-                newPosition.x++;
-            else if (matePosition.x < animal.position.x)
-                newPosition.x--;
-            else if (matePosition.y > animal.position.y)
-                newPosition.y++;
-            else if (matePosition.y < animal.position.y)
-                newPosition.y--;
-
-            if (world.isValidPosition(newPosition)) {
-                animal.position = newPosition;
-            } else {
-                break;
-            }
+            const next = PathfindingSystem.nextStep(animal.position, destination, world);
+            if (!next) break;
+            animal.position = next;
         }
 
         if (isAdjacent(animal.position))
