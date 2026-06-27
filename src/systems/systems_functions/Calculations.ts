@@ -15,7 +15,7 @@ export class Calculations {
     }
 
     static utilityScore(animal: Animal, strategy: MovementStrategyInterface): number {
-        const entry = strategyPriorityRegistry.get(strategy.constructor);
+        const entry = strategyPriorityRegistry.get(strategy.constructor.name);
         if (!entry) return 0;
 
         const st: ST = { ...animal[entry.statKey] };

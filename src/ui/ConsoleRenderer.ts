@@ -1,6 +1,7 @@
 import { World } from "../core/World";
 import { Animal } from "../domain/entities/Animal";
 import { Plant } from "../domain/entities/Plant";
+import { AnimalSpecies } from "../domain/enums/entities_enums/AnimalSpecies";
 import { LivingEntitiesTypes } from "../domain/enums/entities_enums/LivingEntitiesTypes";
 
 export class ConsoleRenderer {
@@ -19,10 +20,19 @@ export class ConsoleRenderer {
         for (const entity of world.livingEntities ?? []) {
             const { x, y } = entity.position;
             if (entity.entityType === LivingEntitiesTypes.ANIMAL) {
-                grid[y]![x] = "A";
+                if ((entity as Animal).animalSpecie === AnimalSpecies.MOOSE)
+                    grid[y]![x] = "M";
+                else if ((entity as Animal).animalSpecie === AnimalSpecies.WOLF)
+                    grid[y]![x] = "W";
+                else if ((entity as Animal).animalSpecie === AnimalSpecies.RABBIT)
+                    grid[y]![x] = "R";
             } else {
                 grid[y]![x] = "P";
             }
+        }
+        for (const ponds of world.waterSources ?? []) {
+            const { x, y } = ponds;
+            grid[y]![x] = "~";
         }
 
         const border = "+" + "-".repeat(world.width) + "+";

@@ -1,8 +1,8 @@
-import { AnimalFactory } from "../../../tests/factories/AnimalFactory";
 import { World } from "../../core/World";
 import { Animal } from "../../domain/entities/Animal";
 import { AnimalStates } from "../../domain/enums/states_enums/AnimalStates";
 import { Position } from "../../shared/types/Position";
+import { Random } from "../systems_functions/Random";
 
 export class ReproductionSystem {
 
@@ -23,15 +23,24 @@ export class ReproductionSystem {
 
     // Gene inheritance and offspring stats based on parents will be here
     private static createOffspring(animal1: Animal, animal2: Animal, world: World): Animal {
-        return AnimalFactory.createGeneric({
-            animalSpecie: animal1.animalSpecie,
-            position: this.findOffspringPosition(animal1, animal2, world),
-            diet: animal1.diet,
-            hunger: { current: animal1.hunger.max ?? 50, max: animal2.hunger.max ?? 100 },
-            thirst: { current: animal2.thirst.max ?? 50, max: animal1.thirst.max ?? 100 },
-            // Max procreation = its not going to reproduce soon
-            procreation: { current: animal2.procreation.max ?? 100, min: animal1.procreation.min ?? 1, max: animal2.procreation.max ?? 100 },
-        });
+        const offspringPosition = this.findOffspringPosition(animal1, animal2, world);
+
+        const avgStat = (a: number, b: number) => Math.round((a + b) / 2);
+        return new Animal(
+            Random.generateID(),
+            offspringPosition,
+            { current: avgStat(animal1.lifespan.max ?? 150, animal2.lifespan.max ?? 150), max: avgStat(animal1.lifespan.max ?? 150, animal2.lifespan.max ?? 150) },
+            [],
+            [AnimalStates.NORMAL],
+            animal1.animalSpecie,
+            { current: avgStat(animal1.hunger.max ?? 50, animal2.hunger.max ?? 50), max: avgStat(animal1.hunger.max ?? 100, animal2.hunger.max ?? 100) },
+            { current: animal2.thirst.max ?? 50, max: animal1.thirst.max ?? 100 },
+            { current: animal2.procreation.max ?? 100, min: animal1.procreation.min ?? 1, max: animal2.procreation.max ?? 100 },
+            animal1.diet,
+            avgStat(animal1.speed, animal2.speed),
+            avgStat(animal1.visionRadius, animal2.visionRadius),
+
+        );
     }
 
     private static findOffspringPosition(animal1: Animal, animal2: Animal, world: World): Position {

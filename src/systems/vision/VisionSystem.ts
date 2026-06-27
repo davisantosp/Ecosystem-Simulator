@@ -5,7 +5,6 @@ import { LivingEntitiesTypes } from "../../domain/enums/entities_enums/LivingEnt
 import { AnimalStates } from "../../domain/enums/states_enums/AnimalStates";
 import { PlantStates } from "../../domain/enums/states_enums/PlantStates";
 import { Position } from "../../shared/types/Position";
-import { ReproductionSystem } from "../reproduction/ReproductionSystem";
 import { Calculations } from "../systems_functions/Calculations";
 
 export class VisionSystem {
@@ -43,7 +42,7 @@ export class VisionSystem {
         if (!world.waterSources?.length) return null;
 
         let closestWater: Position | null = null;
-        let minDistance = animal.visionRadius;
+        let minDistance = Infinity;
 
         for (const waterPos of world.waterSources) {
             const distance = Calculations.distanceBetween(animal.position, waterPos);
@@ -78,12 +77,15 @@ export class VisionSystem {
         if (!entities || entities.length === 0)
             return null;
 
-        let closestTarget: LivingEntity = entities[0]!;
+        let closestTarget = entities[0]!;
+        let closestDistance = Calculations.distanceBetween(animal.position, closestTarget.position);
+
         for (const entity of entities) {
             const distance = Calculations.distanceBetween(animal.position, entity.position);
-            const closestDistance = Calculations.distanceBetween(animal.position, closestTarget.position);
-            if (distance < closestDistance)
+            if (distance < closestDistance) {
                 closestTarget = entity;
+                closestDistance = distance;
+            }
         }
         return closestTarget;
     }
