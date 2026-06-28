@@ -15,7 +15,7 @@ export class Plant extends LivingEntity implements PlantActionsInterface {
         genes: Gene[],
         entityState: EntityState[],
 
-        public readonly plantSpecies: PlantSpecies,
+        public plantSpecies: PlantSpecies,
         public growthRate: StatValue,
         public nutritionalValue: StatValue,
     ) {

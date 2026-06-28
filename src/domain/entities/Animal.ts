@@ -1,4 +1,4 @@
-import { AnimalSpecies, EntityState, LivingEntitiesTypes, AnimalStates } from "../enums";
+import { AnimalSpecies, EntityState, LivingEntitiesTypes, AnimalStates, PlantSpecies } from "../enums";
 import { StatValue } from "../../shared/types/StatValue";
 import { Distance } from "../../shared/types/Distance";
 import { MovementSpeed } from "../../shared/types/MovementSpeed";
@@ -86,6 +86,9 @@ export class Animal extends LivingEntity implements AnimalActionsInterface {
         const maxH = this.hunger.max;
         const newValue = this.hunger.current + nutrition;
         this.hunger.current = maxH !== undefined ? Math.min(newValue, maxH) : newValue;
+
+        if (food.entityType === LivingEntitiesTypes.PLANT && (food as any).plantSpecies === PlantSpecies.VENOMOUS)
+            this.hunger.current = Math.max(0, this.hunger.current - 30);
 
         food.die();
     }

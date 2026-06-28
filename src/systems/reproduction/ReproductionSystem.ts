@@ -2,6 +2,7 @@ import { World } from "../../core/World";
 import { Animal } from "../../domain/entities/Animal";
 import { AnimalStates } from "../../domain/enums";
 import { Position } from "../../shared/types/Position";
+import { InheritanceSystem } from "../inheritance/InheritanceSystem";
 import { Random } from "../utils/Random";
 
 export class ReproductionSystem {
@@ -12,11 +13,13 @@ export class ReproductionSystem {
         const offspring = this.createOffspring(animal1, animal2, world);
         if (!offspring) throw new Error("Unable to create offspring");
 
+        InheritanceSystem.inheritCharacteristics(animal1, animal2, offspring);
+        InheritanceSystem.inheritGenes(animal1, animal2, offspring);
+
         this.registerOffspring(offspring, world);
 
         animal1.procreation.current = animal1.procreation.max ?? 100;
         animal2.procreation.current = animal2.procreation.max ?? 100;
-
         animal1.removeState([AnimalStates.PROCREATING_SEASON]);
         animal2.removeState([AnimalStates.PROCREATING_SEASON]);
     }
