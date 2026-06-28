@@ -53,6 +53,63 @@ describe("ReproductionSystem.procreate", () => {
         expect(offspring.diet.type).toBe(animal1.diet.type);
     });
 
+    it("should inherit characteristics from both parents (averaged stats)", () => {
+        jest.spyOn(Math, "random").mockReturnValue(0.99);
+        const a1 = AnimalFactory.createRabbit({
+            position: { x: 0, y: 0 },
+            procreation: { current: 5, max: 100, min: 1 },
+            entityStates: [AnimalStates.PROCREATING_SEASON],
+            lifespan: { current: 100, max: 100 },
+            hunger: { current: 50, max: 50 },
+            thirst: { current: 50, max: 50 },
+            speed: 2,
+            visionRadius: 4,
+        });
+        const a2 = AnimalFactory.createWolf({
+            position: { x: 0, y: 1 },
+            procreation: { current: 10, max: 100, min: 1 },
+            entityStates: [AnimalStates.PROCREATING_SEASON],
+            lifespan: { current: 200, max: 200 },
+            hunger: { current: 100, max: 100 },
+            thirst: { current: 100, max: 100 },
+            speed: 10,
+            visionRadius: 15,
+        });
+        world.livingEntities = [a1, a2];
+
+        ReproductionSystem.procreate(a1, a2, world);
+        jest.restoreAllMocks();
+
+        const offspring = world.livingEntities![world.livingEntities!.length - 1] as Animal;
+        expect(offspring.lifespan.max).toBe(150);
+        expect(offspring.hunger.max).toBe(75);
+        expect(offspring.thirst.max).toBe(75);
+        expect(offspring.speed).toBe(6);
+        expect(offspring.visionRadius).toBe(10);
+    });
+
+    it("should set offspring genes array by inheriting from parents", () => {
+        const a1 = AnimalFactory.createRabbit({
+            position: { x: 0, y: 0 },
+            procreation: { current: 5, max: 100, min: 1 },
+            entityStates: [AnimalStates.PROCREATING_SEASON],
+            genes: [{ geneType: 1, value: 5 }],
+        });
+        const a2 = AnimalFactory.createRabbit({
+            position: { x: 0, y: 1 },
+            procreation: { current: 10, max: 100, min: 1 },
+            entityStates: [AnimalStates.PROCREATING_SEASON],
+            genes: [{ geneType: 2, value: 8 }],
+        });
+        world.livingEntities = [a1, a2];
+        jest.spyOn(Math, "random").mockReturnValue(0);
+        ReproductionSystem.procreate(a1, a2, world);
+        jest.restoreAllMocks();
+
+        const offspring = world.livingEntities![world.livingEntities!.length - 1] as Animal;
+        expect(offspring.genes.length).toBeGreaterThan(0);
+    });
+
     it("should throw when first animal is null", () => {
         expect(() => {
             ReproductionSystem.procreate(null as any, animal2, world);
