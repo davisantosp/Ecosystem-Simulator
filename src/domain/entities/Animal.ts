@@ -1,31 +1,28 @@
-import { AnimalSpecies } from "../enums/entities_enums/AnimalSpecies";
-import { ST } from "../../shared/types/ST";
+import { AnimalSpecies, EntityState, LivingEntitiesTypes, AnimalStates, PlantSpecies } from "../enums";
+import { StatValue } from "../../shared/types/StatValue";
 import { Distance } from "../../shared/types/Distance";
 import { MovementSpeed } from "../../shared/types/MovementSpeed";
 import { LivingEntity } from "./LivingEntity";
 import { Position } from "../../shared/types/Position";
 import { Gene } from "../../shared/types/Gene";
-import { EntityState } from "../enums/states_enums/EntityState";
-import { LivingEntitiesTypes } from "../enums/entities_enums/LivingEntitiesTypes";
 import { ID } from "../../shared/types/ID";
 import { Diet } from "../../shared/types/Diet";
-import { AnimalActionsInterface } from "../../shared/actions_interfaces/AnimalActionsInterface";
-import { Plant } from "./Plant";
-import { ANIMAL_NUTRITIONAL_VALUE_MAP } from "../../shared/config/ecosystemConfig";
+import { AnimalActionsInterface } from "../../shared/interfaces/AnimalActionsInterface";
+import { ANIMAL_NUTRITIONAL_VALUE_MAP, ANIMAL_STATE_THRESHOLDS } from "../../shared/config/ecosystemConfig";
 
 export class Animal extends LivingEntity implements AnimalActionsInterface {
     constructor(
         id: ID,
         position: Position,
 
-        lifespan: ST,
+        lifespan: StatValue,
         genes: Gene[],
         entityState: EntityState[],
 
-        public readonly animalSpecie: AnimalSpecies,
-        public hunger: ST,
-        public thirst: ST,
-        public procreation: ST,
+        public readonly animalSpecies: AnimalSpecies,
+        public hunger: StatValue,
+        public thirst: StatValue,
+        public procreation: StatValue,
         public diet: Diet,
         public speed: MovementSpeed,
         public visionRadius: Distance
@@ -41,13 +38,45 @@ export class Animal extends LivingEntity implements AnimalActionsInterface {
     }
 
     override update(): void {
+        this.lifespan.current--;
+        this.hunger.current--;
+        this.thirst.current--;
+        if (this.lifespan.current <= 0 || this.hunger.current <= 0 || this.thirst.current <= 0) {
+            this.die();
+            return;
+        }
 
+        const minProcreation = this.procreation.min ?? 0;
+        this.procreation.current = Math.max(minProcreation, this.procreation.current - 1);
+
+        this.syncStates();
+    }
+
+    private syncStates(): void {
+        const hungerRatio = this.hunger.current / (this.hunger.max ?? this.hunger.current);
+        const thirstRatio = this.thirst.current / (this.thirst.max ?? this.thirst.current);
+        const procreationRatio = this.procreation.current / (this.procreation.max ?? this.procreation.current);
+
+        if (hungerRatio < ANIMAL_STATE_THRESHOLDS.HUNGER_CRITICAL)
+            this.updateState([AnimalStates.HUNGRY]);
+        else
+            this.removeState([AnimalStates.HUNGRY]);
+        if (thirstRatio < ANIMAL_STATE_THRESHOLDS.THIRST_CRITICAL)
+            this.updateState([AnimalStates.THIRSTY]);
+        else
+            this.removeState([AnimalStates.THIRSTY]);
+        if (procreationRatio < ANIMAL_STATE_THRESHOLDS.PROCREATION_READY)
+            this.updateState([AnimalStates.PROCREATING_SEASON]);
+        else
+            this.removeState([AnimalStates.PROCREATING_SEASON]);
     }
 
     override getNutritionalValue(): number {
-        // Definindo valores nutricionais por espécie (isso pode vir de uma config externa depois)
+        return ANIMAL_NUTRITIONAL_VALUE_MAP[this.animalSpecies] || 50;
+    }
 
-        return ANIMAL_NUTRITIONAL_VALUE_MAP[this.animalSpecie] || 50; // Valor padrão caso não listado
+    override die(): void {
+        this.updateState([AnimalStates.DEAD]);
     }
 
     eat(food: LivingEntity): void {
@@ -58,13 +87,12 @@ export class Animal extends LivingEntity implements AnimalActionsInterface {
         const newValue = this.hunger.current + nutrition;
         this.hunger.current = maxH !== undefined ? Math.min(newValue, maxH) : newValue;
 
+        if (food.entityType === LivingEntitiesTypes.PLANT && (food as any).plantSpecies === PlantSpecies.VENOMOUS)
+            this.hunger.current = Math.max(0, this.hunger.current - 30);
+
         food.die();
     }
     drink(): void {
-        throw new Error("Method not implemented.");
+        this.thirst.current = this.thirst.max ?? 100;
     }
-    procreate(): void {
-        throw new Error("Method not implemented.");
-    }
-
 }

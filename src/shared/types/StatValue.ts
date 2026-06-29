@@ -1,5 +1,4 @@
-//System Ticks
-export type ST = {
+export type StatValue = {
     current: number,
     max?: number
     min?: number,

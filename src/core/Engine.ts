@@ -1,19 +1,20 @@
 import { Animal } from "../domain/entities/Animal";
 import { Plant } from "../domain/entities/Plant";
-import { LivingEntitiesTypes } from "../domain/enums/entities_enums/LivingEntitiesTypes";
-import { AnimalStates } from "../domain/enums/states_enums/AnimalStates";
-import { PlantStates } from "../domain/enums/states_enums/PlantStates";
+import { LivingEntitiesTypes, AnimalStates, PlantStates } from "../domain/enums";
+import { MovementSystem } from "../systems/movement/MovementSystem";
 import { TurnManager } from "./TurnManager";
 import { World } from "./World";
 
 export class Engine {
     public world: World;
     public isRunning: boolean = false;
-    public currentTick: number = 0;
-    public tickRate: number = 1000; // 1 second
+    public currentTick: number;
+    public tickRate: number;
 
-    constructor(world: World) {
+    constructor(world: World, tickRate: number) {
         this.world = world;
+        this.tickRate = tickRate / 1000; // To be in seconds
+        this.currentTick = 0;
     }
 
     public start() {
@@ -34,7 +35,7 @@ export class Engine {
         console.log("Engine stopped.");
     }
 
-    public update(world: World) {
+    public update() {
         if (this.isRunning) {
             this.currentTick++;
         }
@@ -44,24 +45,25 @@ export class Engine {
 
         console.log(`Tick: ${this.currentTick}`);
 
-        const livingPlants: Plant[] = (world.livingEntities?.filter(x => x.entityType === LivingEntitiesTypes.PLANT) ?? []) as Plant[];
-        const livingAnimals: Animal[] = (world.livingEntities?.filter(x => x.entityType === LivingEntitiesTypes.ANIMAL) ?? []) as Animal[];
+        const livingPlants: Plant[] = (this.world.livingEntities?.filter(x => x.entityType === LivingEntitiesTypes.PLANT) ?? []) as Plant[];
+        const livingAnimals: Animal[] = (this.world.livingEntities?.filter(x => x.entityType === LivingEntitiesTypes.ANIMAL) ?? []) as Animal[];
         TurnManager.organizeAnimalsActionOrder(livingAnimals);
 
         for (const animal of livingAnimals) {
-            animal.update();
             if (animal.entityStates.includes(AnimalStates.DEAD)) {
                 continue;
             }
+            animal.update();
+            MovementSystem.moveEntity(animal, this.world);
         }
 
         for (const plant of livingPlants) {
-            plant.update();
             if (plant.entityStates.includes(PlantStates.WITHERED)) {
                 continue;
             }
+            plant.update();
         }
 
-        world.deleteDeadEntities();
+        this.world.deleteDeadEntities();
     }
 }

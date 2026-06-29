@@ -1,0 +1,425 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  background: #4E220F;
+  color: #F7F1DE;
+  min-height: 100vh;
+}
+
+.app {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1rem;
+  position: relative;
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  padding: 0.5rem 0 0.75rem 3rem;
+  border-bottom: 2px solid #9D6638;
+}
+
+.app-header h1 {
+  font-size: 1.5rem;
+  color: #F7F1DE;
+  letter-spacing: 1px;
+}
+
+.tick-display {
+  font-size: 1.1rem;
+  color: #B0BA99;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.app-body {
+  display: flex;
+  gap: 1rem;
+}
+
+.main-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.grid-container {
+  display: grid;
+  gap: 1px;
+  background: #9D6638;
+  border: 2px solid #B0BA99;
+  border-radius: 8px;
+  padding: 2px;
+  width: 100%;
+  max-width: min(88vw, 750px);
+  overflow: hidden;
+}
+
+.grid-cell {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  font-size: clamp(0.8rem, 3vw, 1.6rem);
+  cursor: pointer;
+  border-radius: 2px;
+  transition: background 0.15s;
+  min-width: 0;
+  min-height: 0;
+}
+
+.grid-cell:hover {
+  filter: brightness(1.4);
+  z-index: 1;
+}
+
+.cell-empty {
+  background: #3A2010;
+}
+
+.cell-water {
+  background: #4A3520;
+}
+
+.cell-animal {
+  background: #5A3A22;
+}
+
+.cell-plant {
+  background: #3A4A22;
+}
+
+.cell-selected {
+  outline: 2px solid #F7F1DE;
+  outline-offset: -2px;
+  z-index: 2;
+}
+
+.cell-emoji {
+  pointer-events: none;
+  line-height: 1;
+}
+
+.cell-overlay {
+  position: absolute;
+  bottom: -1px;
+  right: -1px;
+  font-size: clamp(0.5rem, 1.8vw, 0.9rem);
+  pointer-events: none;
+  filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.35));
+}
+
+.control-panel {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.1s;
+}
+
+.btn:hover:not(:disabled) {
+  opacity: 0.85;
+  transform: translateY(-1px);
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.btn-start {
+  background: #B0BA99;
+  color: #4E220F;
+}
+
+.btn-stop {
+  background: #9D6638;
+  color: #F7F1DE;
+}
+
+.btn-step {
+  background: #B0BA99;
+  color: #4E220F;
+}
+
+.btn-reset {
+  background: #F7F1DE;
+  color: #4E220F;
+}
+
+.counts {
+  display: flex;
+  gap: 1.5rem;
+  font-size: 0.9rem;
+  color: #F7F1DE;
+}
+
+.counts span {
+  padding: 0.25rem 0.75rem;
+  background: #2E1A0A;
+  border-radius: 4px;
+}
+
+.sidebar {
+  width: 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  flex-shrink: 0;
+}
+
+.legend,
+.entity-stats {
+  background: #2E1A0A;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.legend h3,
+.entity-stats h3 {
+  font-size: 0.95rem;
+  color: #F7F1DE;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #9D6638;
+}
+
+.legend-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: #F7F1DE;
+}
+
+.legend-icon {
+  width: 28px;
+  text-align: center;
+  font-size: 1rem;
+}
+
+.entity-stats .hint {
+  font-size: 0.8rem;
+  color: #F7F1DE;
+  font-style: italic;
+  opacity: 0.6;
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.3rem 0;
+  font-size: 0.85rem;
+  border-bottom: 1px solid #9D6638;
+  color: #F7F1DE;
+}
+
+.stat-row:last-child {
+  border-bottom: none;
+}
+
+.stat-label {
+  opacity: 0.7;
+}
+
+.stat-value {
+  font-weight: 500;
+}
+
+.badge-animal {
+  color: #B0BA99;
+  font-weight: 700;
+}
+
+.badge-plant {
+  color: #B0BA99;
+  font-weight: 700;
+}
+
+.id-value {
+  font-family: monospace;
+  font-size: 0.75rem;
+  opacity: 0.5;
+}
+
+.config-toggle {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 100;
+  width: 40px;
+  height: 40px;
+  border: 2px solid #9D6638;
+  border-radius: 8px;
+  background: #F7F1DE;
+  color: #4E220F;
+  font-size: 1.3rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+  line-height: 1;
+}
+
+.config-toggle:hover {
+  background: #EDE4CC;
+}
+
+.config-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(78, 34, 15, 0.35);
+  z-index: 90;
+}
+
+.config-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 300px;
+  z-index: 95;
+  background: #F7F1DE;
+  border-right: 2px solid #9D6638;
+  padding: 1.25rem;
+  overflow-y: auto;
+  transform: translateX(-100%);
+  transition: transform 0.25s ease;
+}
+
+.config-menu--open {
+  transform: translateX(0);
+}
+
+.config-menu h2 {
+  font-size: 1.1rem;
+  color: #4E220F;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #9D6638;
+}
+
+.config-menu fieldset {
+  border: 1px solid #B0BA99;
+  border-radius: 6px;
+  padding: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.config-menu legend {
+  font-size: 0.85rem;
+  color: #4E220F;
+  opacity: 0.7;
+  padding: 0 0.3rem;
+}
+
+.config-menu label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.3rem 0;
+  font-size: 0.85rem;
+  gap: 0.5rem;
+  color: #4E220F;
+}
+
+.config-menu input[type="number"] {
+  width: 72px;
+  padding: 0.25rem 0.4rem;
+  background: #FFF;
+  border: 1px solid #B0BA99;
+  border-radius: 4px;
+  color: #4E220F;
+  font-size: 0.85rem;
+  text-align: right;
+}
+
+.config-menu input[type="number"]:focus {
+  outline: none;
+  border-color: #9D6638;
+}
+
+@media (max-width: 860px) {
+  .app-body {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .sidebar > * {
+    flex: 1;
+    min-width: 200px;
+  }
+
+  .grid-container {
+    max-width: 95vw;
+  }
+
+  .app-header h1 {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 500px) {
+  .app-header {
+    padding-left: 2.5rem;
+  }
+
+  .app-header h1 {
+    font-size: 1rem;
+  }
+
+  .tick-display {
+    font-size: 0.85rem;
+  }
+
+  .config-menu {
+    width: 260px;
+  }
+
+  .config-toggle {
+    width: 34px;
+    height: 34px;
+    font-size: 1.1rem;
+    top: 0.75rem;
+    left: 0.75rem;
+  }
+}

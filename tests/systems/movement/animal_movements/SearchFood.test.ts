@@ -1,8 +1,7 @@
 import { World } from "../../../../src/core/World";
 import { Animal } from "../../../../src/domain/entities/Animal";
 import { Plant } from "../../../../src/domain/entities/Plant";
-import { PlantStates } from "../../../../src/domain/enums/states_enums/PlantStates";
-import { DietTypes } from "../../../../src/domain/enums/other_enums/DietTypes";
+import { PlantStates, DietTypes } from "../../../../src/domain/enums";
 import { SearchFood } from "../../../../src/systems/movement/animal_movements/SearchFood";
 import { AnimalFactory } from "../../../factories/AnimalFactory";
 import { PlantFactory } from "../../../factories/PlantFactory";
@@ -75,6 +74,25 @@ describe("SearchFood.entityMove", () => {
         strategy.entityMove(animal, world);
 
         expect(animal.position.x).toBe(3);
+    });
+
+    it("should route around water to reach food", () => {
+        const animal = AnimalFactory.createRabbit({
+            position: { x: 0, y: 0 },
+            speed: 4,
+            visionRadius: 10,
+        });
+        const plant = PlantFactory.createCommonPlant({ position: { x: 2, y: 0 } });
+        world = CoreFactory.createWorld({ width: 5, height: 5 });
+        world.livingEntities = [plant];
+        world.waterSources = [{ x: 1, y: 0 }];
+
+        const result = strategy.entityMove(animal, world);
+
+        expect(result).toBe(true);
+        expect(animal.position.x).toBe(2);
+        expect(animal.position.y).toBe(0);
+        expect(plant.entityStates).toContain(PlantStates.WITHERED);
     });
 
     it("should stop at world boundary", () => {

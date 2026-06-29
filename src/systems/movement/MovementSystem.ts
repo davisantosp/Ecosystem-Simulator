@@ -1,8 +1,9 @@
 import { World } from "../../core/World";
 import { Animal } from "../../domain/entities/Animal";
-import { Calculations } from "../systems_functions/Calculations";
+import { StatValue } from "../../shared/types/StatValue";
 import { RandomlyMove } from "./animal_movements/RandomlyMove";
-import { movementStrategyRegistry } from "./animal_movements/registry/MovementStrategyRegistry";
+import { getMovementStrategies } from "./animal_movements/registry/MovementStrategyRegistry";
+import { strategyPriorityRegistry } from "./animal_movements/registry/StrategyStatMap";
 import { MovementStrategyInterface } from "./MovementStrategyInterface";
 
 export class MovementSystem {
@@ -27,7 +28,7 @@ export class MovementSystem {
         const movementToDo: MovementStrategyInterface[] = [];
 
         for (const state of animal.entityStates) {
-            const movement = movementStrategyRegistry.find(x => x.state === state);
+            const movement = getMovementStrategies().find(x => x.state === state);
             if (!movement?.strategy) {
                 continue;
             }
@@ -49,7 +50,7 @@ export class MovementSystem {
         for (const strategy of strategies) {
             const temp: StrategyAndPriority = {
                 strategy: strategy,
-                priority: Calculations.utilityScore(animal, strategy)
+                priority: this.utilityScore(animal, strategy)
             };
             if (!temp) throw new Error("Error assigning priorities");
 
@@ -59,5 +60,20 @@ export class MovementSystem {
         // Reversed
         const sortedMap = strategyAndPriorityMap.sort((a, b) => b.priority - a.priority);
         return sortedMap.map(x => x.strategy);
+    }
+
+
+    private static utilityScore(animal: Animal, strategy: MovementStrategyInterface): number {
+        const entry = strategyPriorityRegistry.get(strategy.constructor.name);
+        if (!entry) return 0;
+
+        const st: StatValue = { ...animal[entry.statKey] };
+        if (typeof st === "number")
+            return entry.priorityWeight * (1 / (st + 1));
+
+        if (st.max === 0) return 0;
+
+        const urgencyRatio = 1 - (st.current / st.max!);
+        return entry.priorityWeight * urgencyRatio;
     }
 }

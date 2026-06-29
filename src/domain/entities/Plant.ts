@@ -1,26 +1,23 @@
-import { PlantSpecies } from "../enums/entities_enums/PlantSpecies";
-import { PlantStates } from "../enums/states_enums/PlantStates";
-import { ST } from "../../shared/types/ST";
+import { PlantSpecies, PlantStates, EntityState, LivingEntitiesTypes } from "../enums";
+import { StatValue } from "../../shared/types/StatValue";
 import { LivingEntity } from "./LivingEntity";
 import { Position } from "../../shared/types/Position";
 import { Gene } from "../../shared/types/Gene";
-import { EntityState } from "../enums/states_enums/EntityState";
-import { LivingEntitiesTypes } from "../enums/entities_enums/LivingEntitiesTypes";
 import { ID } from "../../shared/types/ID";
-import { PlantActionsInterface } from "../../shared/actions_interfaces/PlantActionsInterface";
+import { PlantActionsInterface } from "../../shared/interfaces/PlantActionsInterface";
 
 export class Plant extends LivingEntity implements PlantActionsInterface {
     constructor(
         id: ID,
         position: Position,
 
-        lifespan: ST,
+        lifespan: StatValue,
         genes: Gene[],
         entityState: EntityState[],
 
-        public readonly plantSpecies: PlantSpecies,
-        public growthRate: ST,
-        public nutritionalValue: ST,
+        public plantSpecies: PlantSpecies,
+        public growthRate: StatValue,
+        public nutritionalValue: StatValue,
     ) {
         super(
             id,
@@ -36,15 +33,16 @@ export class Plant extends LivingEntity implements PlantActionsInterface {
             this.die();
             return;
         }
-
-        // Update nutritionalValue
         this.photosynthesize();
-        // Update
         this.grow();
     }
     override getNutritionalValue(): number {
         return this.nutritionalValue.current;
     }
+    override die() {
+        this.updateState([PlantStates.WITHERED]);
+    }
+
     photosynthesize(): void {
         const foodProduction = Math.floor(this.growthRate.current / 10);
         const currentNV = this.nutritionalValue.current;
@@ -66,17 +64,18 @@ export class Plant extends LivingEntity implements PlantActionsInterface {
         else
             maxNV = 100;
 
-        const seed = 0;
         const sprout = Math.floor(maxNV / 3);
         const mature = Math.floor((2 * maxNV) / 3);
-        if (currentNV >= mature)
+        if (currentNV >= mature) {
             this.updateState([PlantStates.MATURE]);
-        else if (currentNV >= sprout)
+            this.removeState([PlantStates.SPROUT, PlantStates.SEED]);
+        } else if (currentNV >= sprout) {
             this.updateState([PlantStates.SPROUT]);
-        else if (currentNV >= seed)
+            this.removeState([PlantStates.SEED, PlantStates.MATURE]);
+        } else {
             this.updateState([PlantStates.SEED]);
-        else
-            this.die();
+            this.removeState([PlantStates.SPROUT, PlantStates.MATURE]);
+        }
     }
 
 }

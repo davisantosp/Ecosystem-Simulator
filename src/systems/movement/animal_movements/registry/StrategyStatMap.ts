@@ -1,7 +1,3 @@
-import { MoveToProcreate } from "../MoveToProcreate";
-import { SearchFood } from "../SearchFood";
-import { SearchWater } from "../SearchWater";
-
 export type StatKey = "hunger" | "thirst" | "procreation";
 
 export type StrategyPriorityEntry = {
@@ -9,8 +5,8 @@ export type StrategyPriorityEntry = {
     priorityWeight: number;
 };
 
-export const strategyPriorityRegistry = new Map<Function, StrategyPriorityEntry>([
-    [SearchFood, { statKey: "hunger", priorityWeight: 2 }],
-    [SearchWater, { statKey: "thirst", priorityWeight: 3 }],
-    [MoveToProcreate, { statKey: "procreation", priorityWeight: 1 }],
+export const strategyPriorityRegistry = new Map<string, StrategyPriorityEntry>([
+    ["SearchFood", { statKey: "hunger", priorityWeight: 2 }],
+    ["SearchWater", { statKey: "thirst", priorityWeight: 3 }],
+    ["MoveToProcreate", { statKey: "procreation", priorityWeight: 1 }],
 ]);

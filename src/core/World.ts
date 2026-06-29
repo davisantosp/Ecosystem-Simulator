@@ -1,9 +1,7 @@
 import { Animal } from "../domain/entities/Animal";
 import { LivingEntity } from "../domain/entities/LivingEntity";
 import { Plant } from "../domain/entities/Plant";
-import { LivingEntitiesTypes } from "../domain/enums/entities_enums/LivingEntitiesTypes";
-import { AnimalStates } from "../domain/enums/states_enums/AnimalStates";
-import { PlantStates } from "../domain/enums/states_enums/PlantStates";
+import { LivingEntitiesTypes, AnimalStates, PlantStates } from "../domain/enums";
 import { Distance } from "../shared/types/Distance";
 import { Position } from "../shared/types/Position";
 
@@ -12,14 +10,24 @@ export class World {
         public readonly width: Distance,
         public readonly height: Distance,
         public livingEntities?: LivingEntity[],
+        public waterSources?: Position[]
     ) {
     }
 
     public isValidPosition(position: Position): boolean {
-        return position.x >= 0
-            && position.x < this.width
-            && position.y >= 0
-            && position.y < this.height;
+        const inBounds =
+            position.x >= 0 &&
+            position.x < this.width &&
+            position.y >= 0 &&
+            position.y < this.height;
+
+        if (!inBounds) return false;
+
+        const isWater = this.waterSources?.some(
+            w => w.x === position.x && w.y === position.y
+        );
+
+        return !isWater;
     }
 
     public deleteDeadEntities(): void {
