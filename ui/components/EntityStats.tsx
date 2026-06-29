@@ -9,6 +9,7 @@ export default function EntityStats({
     thirst: string;
     position: string;
     type: string;
+    genes: string[];
   } | null;
 }) {
   if (!entity) {
@@ -55,6 +56,29 @@ export default function EntityStats({
         <span className="stat-label">ID:</span>
         <span className="stat-value id-value">{entity.id.slice(0, 8)}...</span>
       </div>
+      {entity.genes.length > 0 && (
+        <div style={{ marginTop: "0.5rem" }}>
+          <div className="stat-label" style={{ fontSize: "0.75rem", marginBottom: "0.3rem" }}>
+            Genes
+          </div>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "4px" }}>
+            {entity.genes.map(g => (
+              <span key={g} style={{
+                fontSize: "0.7rem", padding: "2px 6px",
+                background: "#3A2010", borderRadius: "4px",
+                border: "1px solid #9D6638", color: "#B0BA99"
+              }}>
+                {g}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+      {entity.genes.length === 0 && (
+        <div className="stat-label" style={{ fontSize: "0.75rem", fontStyle: "italic", opacity: 0.5, marginTop: "0.5rem" }}>
+          No genes
+        </div>
+      )}
     </div>
   );
 }

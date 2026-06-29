@@ -19,14 +19,14 @@ const PLANT_EMOJIS: Record<number, Record<number, string>> = {
   },
   [PlantSpecies.VENOMOUS]: {
     [PlantStates.SEED]: "🌱",
-    [PlantStates.SPROUT]: "🌿",
-    [PlantStates.MATURE]: "🌳",
+    [PlantStates.SPROUT]: "🪴",
+    [PlantStates.MATURE]: "🪲",
     [PlantStates.WITHERED]: "🥀",
   },
   [PlantSpecies.RARE]: {
     [PlantStates.SEED]: "🌱",
-    [PlantStates.SPROUT]: "🌿",
-    [PlantStates.MATURE]: "🌳",
+    [PlantStates.SPROUT]: "🌸",
+    [PlantStates.MATURE]: "🌺",
     [PlantStates.WITHERED]: "🥀",
   },
 };

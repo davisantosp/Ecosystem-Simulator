@@ -56,10 +56,6 @@ export default function ConfigMenu({
 
   return (
     <>
-      <button className="config-toggle" onClick={onToggle} title="Configuration">
-        {open ? "✕" : "☰"}
-      </button>
-
       {open && <div className="config-overlay" onClick={onToggle} />}
 
       <div className={`config-menu${open ? " config-menu--open" : ""}`}>
