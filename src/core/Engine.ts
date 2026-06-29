@@ -2,6 +2,7 @@ import { Animal } from "../domain/entities/Animal";
 import { Plant } from "../domain/entities/Plant";
 import { LivingEntitiesTypes, AnimalStates, PlantStates } from "../domain/enums";
 import { MovementSystem } from "../systems/movement/MovementSystem";
+import { ReproductionSystem } from "../systems/reproduction/ReproductionSystem";
 import { TurnManager } from "./TurnManager";
 import { World } from "./World";
 
@@ -62,6 +63,7 @@ export class Engine {
                 continue;
             }
             plant.update();
+            ReproductionSystem.propagatePlant(plant, this.world);
         }
 
         this.world.deleteDeadEntities();
