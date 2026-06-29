@@ -17,7 +17,15 @@ export default function Legend() {
         </div>
         <div className="legend-item">
           <span className="legend-icon">🌱🌿🌳</span>
-          <span>Plant (Seed / Sprout / Mature)</span>
+          <span>Common Plant (Seed / Sprout / Mature)</span>
+        </div>
+        <div className="legend-item">
+          <span className="legend-icon">🌱🪴🪲</span>
+          <span>Venomous Plant (Seed / Sprout / Mature)</span>
+        </div>
+        <div className="legend-item">
+          <span className="legend-icon">🌱🌸🌺</span>
+          <span>Rare Plant (Seed / Sprout / Mature)</span>
         </div>
         <div className="legend-item">
           <span className="legend-icon">🌊</span>

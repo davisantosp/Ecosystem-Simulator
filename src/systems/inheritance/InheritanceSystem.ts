@@ -62,13 +62,15 @@ export class InheritanceSystem {
 
     static inheritGenes(parent1: LivingEntity, parent2: LivingEntity, progeny: LivingEntity): boolean {
         const progenyGenes: Gene[] = [];
-        const allParentGenes = [...parent1.genes, ...parent2.genes];
+        const uniqueParentGenes = [
+            ...new Map(
+                [...parent1.genes, ...parent2.genes].map(g => [g.geneType, g])
+            ).values()
+        ];
 
-        for (const gene of allParentGenes) {
-            const alreadyHas = progenyGenes.some(g => g.geneType === gene.geneType);
-            if (!alreadyHas && this.geneApplyChance(gene)) {
+        for (const gene of uniqueParentGenes) {
+            if (this.geneApplyChance(gene))
                 progenyGenes.push({ ...gene });
-            }
         }
 
         for (const newGene of this.receiveNewGenes(progenyGenes)) {

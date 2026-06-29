@@ -1,10 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Engine } from "../src/core/Engine";
-import { TurnManager } from "../src/core/TurnManager";
 import { World } from "../src/core/World";
 import { Animal } from "../src/domain/entities/Animal";
 import { Plant } from "../src/domain/entities/Plant";
-import { AnimalStates, PlantStates, PlantSpecies, AnimalSpecies } from "../src/domain/enums";
+import { AnimalStates, PlantStates, PlantSpecies, AnimalSpecies, LivingEntitiesTypes, GeneTypes } from "../src/domain/enums";
 import { Random } from "../src/systems/utils/Random";
 import { AnimalFactory } from "../tests/factories/AnimalFactory";
 import { PlantFactory } from "../tests/factories/PlantFactory";
@@ -13,6 +12,9 @@ import ControlPanel from "./components/ControlPanel";
 import EntityStats from "./components/EntityStats";
 import Legend from "./components/Legend";
 import ConfigMenu, { DEFAULT_CONFIG, type SimConfig } from "./components/ConfigMenu";
+import StatisticsPanel from "./components/StatisticsPanel";
+import DetailedStats from "./components/DetailedStats";
+import { captureSnapshot, MAX_HISTORY, type TickSnapshot } from "./utils/statsTracker";
 
 type EntityInfo = {
   id: string;
@@ -22,6 +24,7 @@ type EntityInfo = {
   thirst: string;
   position: string;
   type: "animal" | "plant" | "water";
+  genes: string[];
 };
 
 function createInitialWorld(config: SimConfig): World {
@@ -60,36 +63,33 @@ export default function App() {
   const [config, setConfig] = useState<SimConfig>(DEFAULT_CONFIG);
   const [configOpen, setConfigOpen] = useState(false);
   const worldRef = useRef<World>(createInitialWorld(config));
-  const engineRef = useRef<Engine>(new Engine(worldRef.current));
+  const engineRef = useRef<Engine>(new Engine(worldRef.current, {} as any));
   const [tick, setTick] = useState(0);
   const [running, setRunning] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [sidebarTab, setSidebarTab] = useState<"info" | "stats">("info");
+  const [detailedStatsOpen, setDetailedStatsOpen] = useState(false);
+  const statsHistoryRef = useRef<TickSnapshot[]>([]);
   const timerRef = useRef<number | null>(null);
 
   const tickSimulation = useCallback(() => {
     const engine = engineRef.current;
-    const world = worldRef.current;
     if (!engine.isRunning) engine.start();
-
-    const aliveAnimals = (world.livingEntities ?? []).filter(
-      (e) => e.entityType === 1 && !e.entityStates.includes(AnimalStates.DEAD)
-    ) as Animal[];
-    const alivePlants = (world.livingEntities ?? []).filter(
-      (e) => e.entityType === 0 && !e.entityStates.includes(PlantStates.WITHERED)
-    ) as Plant[];
-
-    TurnManager.organizeAnimalsActionOrder(aliveAnimals);
-
-    for (const animal of aliveAnimals) {
-      animal.update();
-    }
-    for (const plant of alivePlants) {
-      plant.update();
-    }
-
-    world.deleteDeadEntities();
-    engine.currentTick++;
+    engine.update();
     setTick(engine.currentTick);
+    const world = worldRef.current;
+    const animals = (world.livingEntities ?? []).filter(
+      (e) => e.entityType === LivingEntitiesTypes.ANIMAL &&
+             !e.entityStates.includes(AnimalStates.DEAD)
+    ) as Animal[];
+    const plants = (world.livingEntities ?? []).filter(
+      (e) => e.entityType === LivingEntitiesTypes.PLANT &&
+             !e.entityStates.includes(PlantStates.WITHERED)
+    ) as Plant[];
+    const snapshot = captureSnapshot(animals, plants, engine.currentTick);
+    const history = statsHistoryRef.current;
+    history.push(snapshot);
+    if (history.length > MAX_HISTORY) history.shift();
   }, []);
 
   const start = useCallback(() => {
@@ -108,9 +108,10 @@ export default function App() {
     setRunning(false);
     const newWorld = createInitialWorld(config);
     worldRef.current = newWorld;
-    engineRef.current = new Engine(newWorld);
+    engineRef.current = new Engine(newWorld, {} as any);
     setTick(0);
     setSelectedId(null);
+    statsHistoryRef.current = [];
   }, [config]);
 
   useEffect(() => {
@@ -135,17 +136,17 @@ export default function App() {
 
   const world = worldRef.current;
   const animals = (world.livingEntities ?? []).filter(
-    (e) => e.entityType === 1 && !e.entityStates.includes(AnimalStates.DEAD)
+    (e) => e.entityType === LivingEntitiesTypes.ANIMAL && !e.entityStates.includes(AnimalStates.DEAD)
   ) as Animal[];
   const plants = (world.livingEntities ?? []).filter(
-    (e) => e.entityType === 0 && !e.entityStates.includes(PlantStates.WITHERED)
+    (e) => e.entityType === LivingEntitiesTypes.PLANT && !e.entityStates.includes(PlantStates.WITHERED)
   ) as Plant[];
 
   const selectedEntity = useMemo<EntityInfo | null>(() => {
     if (!selectedId) return null;
     const entity = (world.livingEntities ?? []).find((e) => e.id === selectedId);
     if (!entity) return null;
-    if (entity.entityType === 1) {
+    if (entity.entityType === LivingEntitiesTypes.ANIMAL) {
       const a = entity as Animal;
       return {
         id: a.id,
@@ -157,6 +158,7 @@ export default function App() {
         thirst: `${a.thirst.current}/${a.thirst.max ?? "∞"}`,
         position: `(${a.position.x}, ${a.position.y})`,
         type: "animal" as const,
+        genes: a.genes.map(g => GeneTypes[g.geneType] ?? String(g.geneType)),
       };
     }
     const p = entity as Plant;
@@ -172,12 +174,19 @@ export default function App() {
       thirst: "-",
       position: `(${p.position.x}, ${p.position.y})`,
       type: "plant" as const,
+      genes: p.genes.map(g => GeneTypes[g.geneType] ?? String(g.geneType)),
     };
   }, [selectedId, tick]);
+
+  const statsHistory = useMemo(() => statsHistoryRef.current, [tick]);
+  const currentSnapshot = statsHistory.length > 0 ? statsHistory[statsHistory.length - 1] : null;
 
   return (
     <div className="app">
       <header className="app-header">
+        <button className="config-toggle" onClick={() => setConfigOpen(v => !v)} title="Configuration">
+          ⚙
+        </button>
         <h1>EcoSim</h1>
         <span className="tick-display">Tick: {tick}{config.maxTicks > 0 ? ` / ${config.maxTicks}` : ""}</span>
       </header>
@@ -211,10 +220,48 @@ export default function App() {
         </div>
 
         <aside className="sidebar">
-          <Legend />
-          <EntityStats entity={selectedEntity} />
+          <div className="sidebar-tabs">
+            <button
+              className={`sidebar-tab ${sidebarTab === "info" ? "sidebar-tab--active" : ""}`}
+              onClick={() => setSidebarTab("info")}
+            >
+              Info
+            </button>
+            <button
+              className={`sidebar-tab ${sidebarTab === "stats" ? "sidebar-tab--active" : ""}`}
+              onClick={() => setSidebarTab("stats")}
+            >
+              Stats
+            </button>
+          </div>
+
+          {sidebarTab === "info" && (
+            <>
+              <Legend />
+              <EntityStats entity={selectedEntity} />
+            </>
+          )}
+
+          {sidebarTab === "stats" && (
+            <StatisticsPanel
+              history={statsHistory}
+              current={currentSnapshot}
+              onOpenDetailed={() => setDetailedStatsOpen(true)}
+            />
+          )}
         </aside>
       </div>
+
+      {detailedStatsOpen && (
+        <div className="modal-overlay" onClick={() => setDetailedStatsOpen(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <DetailedStats
+              history={statsHistory}
+              onClose={() => setDetailedStatsOpen(false)}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

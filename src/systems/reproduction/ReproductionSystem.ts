@@ -1,12 +1,15 @@
+import { PlantFactory } from "../../../tests/factories/PlantFactory";
 import { World } from "../../core/World";
 import { Animal } from "../../domain/entities/Animal";
-import { AnimalStates } from "../../domain/enums";
+import { Plant } from "../../domain/entities/Plant";
+import { AnimalStates, PlantSpecies, PlantStates } from "../../domain/enums";
+import { SPREAD_CHANCE } from "../../shared/config/ecosystemConfig";
 import { Position } from "../../shared/types/Position";
 import { InheritanceSystem } from "../inheritance/InheritanceSystem";
 import { Random } from "../utils/Random";
 
 export class ReproductionSystem {
-
+    // Animal
     static procreate(animal1: Animal, animal2: Animal, world: World): void {
         if (!animal1 || !animal2) throw new Error("Not enough animals to reproduce");
 
@@ -16,7 +19,7 @@ export class ReproductionSystem {
         InheritanceSystem.inheritCharacteristics(animal1, animal2, offspring);
         InheritanceSystem.inheritGenes(animal1, animal2, offspring);
 
-        this.registerOffspring(offspring, world);
+        this.registerEntity(offspring, world);
 
         animal1.procreation.current = animal1.procreation.max ?? 100;
         animal2.procreation.current = animal2.procreation.max ?? 100;
@@ -24,9 +27,8 @@ export class ReproductionSystem {
         animal2.removeState([AnimalStates.PROCREATING_SEASON]);
     }
 
-    // Gene inheritance and offspring stats based on parents will be here
     private static createOffspring(animal1: Animal, animal2: Animal, world: World): Animal {
-        const offspringPosition = this.findOffspringPosition(animal1, animal2, world);
+        const offspringPosition = this.findAdjacentPosition(animal1.position, world) ?? animal1.position;
 
         const avgStat = (a: number, b: number) => Math.round((a + b) / 2);
         return new Animal(
@@ -46,19 +48,61 @@ export class ReproductionSystem {
         );
     }
 
-    private static findOffspringPosition(animal1: Animal, animal2: Animal, world: World): Position {
-        const candidates: Position[] = [
-            { x: animal1.position.x + 1, y: animal1.position.y },
-            { x: animal1.position.x - 1, y: animal1.position.y },
-            { x: animal1.position.x, y: animal1.position.y + 1 },
-            { x: animal1.position.x, y: animal1.position.y - 1 },
-        ];
-
-        return candidates.find(p => world.isValidPosition(p)) ?? animal1.position;
+    // Plant
+    static canSpread(plant: Plant): boolean {
+        return (
+            plant.entityStates.includes(PlantStates.MATURE) &&
+            !plant.entityStates.includes(PlantStates.WITHERED) &&
+            Math.random() < SPREAD_CHANCE
+        );
     }
-    private static registerOffspring(offspring: Animal, world: World) {
+
+    static propagatePlant(plant: Plant, world: World): void {
+        if (!this.canSpread(plant)) return;
+
+        const position = this.findAdjacentPosition(plant.position, world);
+        if (!position) return;
+
+        const seed = this.createSeed(plant, position);
+
+        InheritanceSystem.inheritCharacteristics(plant, plant, seed);
+        InheritanceSystem.inheritGenes(plant, plant, seed);
+
+        this.registerEntity(seed, world);
+    }
+
+    private static createSeed(parent: Plant, position: Position): Plant {
+        switch (parent.plantSpecies) {
+            case PlantSpecies.VENOMOUS:
+                return PlantFactory.createVenomousPlant({ position });
+            case PlantSpecies.RARE:
+                return PlantFactory.createRarePlant({ position });
+            default:
+                return PlantFactory.createCommonPlant({ position });
+        }
+    }
+
+    // Shared
+    private static findAdjacentPosition(origin: Position, world: World): Position | null {
+        const candidates: Position[] = [
+            { x: origin.x + 1, y: origin.y },
+            { x: origin.x - 1, y: origin.y },
+            { x: origin.x, y: origin.y + 1 },
+            { x: origin.x, y: origin.y - 1 },
+        ].filter(p => {
+            if (!world.isValidPosition(p)) return false;
+            return !(world.livingEntities ?? []).some(
+                e => e.position.x === p.x && e.position.y === p.y
+            );
+        });
+
+        if (candidates.length === 0) return null;
+        return candidates[Math.floor(Math.random() * candidates.length)]!;
+    }
+
+    private static registerEntity(entity: Animal | Plant, world: World): void {
         if (!world.livingEntities)
-            throw new Error("World has no entity list to register offspring.");
-        world.livingEntities?.push(offspring);
+            throw new Error("World has no entity list to register entity.");
+        world.livingEntities.push(entity);
     }
 }

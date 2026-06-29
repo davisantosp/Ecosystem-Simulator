@@ -1,8 +1,10 @@
 import { World } from "../../../src/core/World";
 import { Animal } from "../../../src/domain/entities/Animal";
-import { AnimalSpecies, AnimalStates } from "../../../src/domain/enums";
+import { Plant } from "../../../src/domain/entities/Plant";
+import { AnimalSpecies, AnimalStates, PlantStates } from "../../../src/domain/enums";
 import { ReproductionSystem } from "../../../src/systems/reproduction/ReproductionSystem";
 import { AnimalFactory } from "../../factories/AnimalFactory";
+import { PlantFactory } from "../../factories/PlantFactory";
 import { CoreFactory } from "../../factories/CoreFactory";
 
 describe("ReproductionSystem.procreate", () => {
@@ -164,6 +166,113 @@ describe("ReproductionSystem.procreate", () => {
 
         expect(() => {
             ReproductionSystem.procreate(animal1, animal2, world);
-        }).toThrow("World has no entity list to register offspring");
+        }).toThrow("World has no entity list to register entity");
+    });
+});
+
+describe("ReproductionSystem.canSpread", () => {
+    let plant: Plant;
+
+    beforeEach(() => {
+        plant = PlantFactory.createCommonPlant({
+            position: { x: 5, y: 5 },
+            entityStates: [PlantStates.SEED],
+        });
+    });
+
+    it("should return true when plant is MATURE and random is below SPREAD_CHANCE", () => {
+        jest.spyOn(Math, "random").mockReturnValue(0.01);
+        plant.updateState([PlantStates.MATURE]);
+        expect(ReproductionSystem.canSpread(plant)).toBe(true);
+        jest.restoreAllMocks();
+    });
+
+    it("should return false when random is above SPREAD_CHANCE", () => {
+        jest.spyOn(Math, "random").mockReturnValue(0.99);
+        plant.updateState([PlantStates.MATURE]);
+        expect(ReproductionSystem.canSpread(plant)).toBe(false);
+        jest.restoreAllMocks();
+    });
+
+    it("should return false when plant is not MATURE", () => {
+        expect(ReproductionSystem.canSpread(plant)).toBe(false);
+    });
+
+    it("should return false when plant is WITHERED", () => {
+        plant.updateState([PlantStates.WITHERED]);
+        expect(ReproductionSystem.canSpread(plant)).toBe(false);
+    });
+});
+
+describe("ReproductionSystem.propagatePlant", () => {
+    let world: World;
+    let plant: Plant;
+
+    beforeEach(() => {
+        world = CoreFactory.createWorld({ width: 10, height: 10 });
+        plant = PlantFactory.createCommonPlant({
+            position: { x: 5, y: 5 },
+            entityStates: [PlantStates.MATURE],
+        });
+        world.livingEntities = [plant];
+    });
+
+    it("should create a seed at an adjacent position when spreading", () => {
+        jest.spyOn(Math, "random")
+            .mockReturnValueOnce(0.01)  // canSpread passes
+            .mockReturnValue(0.99);     // rest: no mutations
+        const initialCount = world.livingEntities!.length;
+
+        ReproductionSystem.propagatePlant(plant, world);
+
+        expect(world.livingEntities!.length).toBe(initialCount + 1);
+        const seed = world.livingEntities![world.livingEntities!.length - 1] as Plant;
+        const isAdjacent =
+            (Math.abs(seed.position.x - 5) === 1 && seed.position.y === 5) ||
+            (Math.abs(seed.position.y - 5) === 1 && seed.position.x === 5);
+        expect(isAdjacent).toBe(true);
+        jest.restoreAllMocks();
+    });
+
+    it("should not spawn when canSpread returns false", () => {
+        jest.spyOn(Math, "random").mockReturnValue(0.99);
+        const initialCount = world.livingEntities!.length;
+
+        ReproductionSystem.propagatePlant(plant, world);
+
+        expect(world.livingEntities!.length).toBe(initialCount);
+        jest.restoreAllMocks();
+    });
+
+    it("should inherit characteristics from the parent plant", () => {
+        jest.spyOn(Math, "random")
+            .mockReturnValueOnce(0.01)  // canSpread passes
+            .mockReturnValue(0.99);     // rest: no mutations
+        plant.growthRate = { current: 80, max: 80 };
+        plant.nutritionalValue = { current: 150, max: 150 };
+
+        ReproductionSystem.propagatePlant(plant, world);
+
+        const seed = world.livingEntities![world.livingEntities!.length - 1] as Plant;
+        expect(seed.growthRate.max).toBe(80);
+        expect(seed.nutritionalValue.max).toBe(150);
+        jest.restoreAllMocks();
+    });
+
+    it("should not propagate when no adjacent cell is free", () => {
+        world = CoreFactory.createWorld({ width: 1, height: 1 });
+        plant = PlantFactory.createCommonPlant({
+            position: { x: 0, y: 0 },
+            entityStates: [PlantStates.MATURE],
+        });
+        world.livingEntities = [plant];
+
+        jest.spyOn(Math, "random")
+            .mockReturnValueOnce(0.01)  // canSpread passes
+            .mockReturnValue(0.99);     // rest: no mutations
+        ReproductionSystem.propagatePlant(plant, world);
+
+        expect(world.livingEntities!.length).toBe(1);
+        jest.restoreAllMocks();
     });
 });

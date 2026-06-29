@@ -35,3 +35,5 @@ export const GENE_VALUE_INTERVAL_MAP: Readonly<Record<GeneTypes, Interval | null
     [GeneTypes.RARE_PLANT_GENE]: null,
     [GeneTypes.VENOMOUS_PLANT_GENE]: null
 };
+
+export const SPREAD_CHANCE = 0.05
