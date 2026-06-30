@@ -37,35 +37,36 @@ Animals eat, drink, and reproduce. Plants grow, spread seeds, and get consumed. 
 
 The project is split into four layers that only communicate downward. Domain entities have no knowledge of systems; systems have no knowledge of the UI.
 
-`
+```
+.
 ├── src/
-│   ├── core/                          Engine, World, TurnManager
-│   │                                                            
-│   ├── domain/                                                  
-│   │   ├── entities/                  Animal, Plant, LivingEntity
-│   │   └── enums/                     AnimalStates, PlantStates, DietTypes, GeneTypes
-│   │                                                                                 
+│   ├── core/            Engine, World, TurnManager
+│   │
+│   ├── domain/
+│   │   ├── entities/      Animal, Plant, LivingEntity
+│   │   └── enums/         AnimalStates, PlantStates, DietTypes, GeneTypes
+│   │
 │   ├── shared/
-│   │   ├── config/                    ecosystemConfig — thresholds, intervals, diet maps
-│   │   ├── interfaces/                AnimalActionsInterface, PlantActionsInterface, LivingEntityActionsInterface
-│   │   └── types/                     StatValue, Gene, Diet, Position, Distance, Interval
-│   │                                                                                        
-│   └── systems/                                                                           
-│       ├── movement/                  SearchFood, SearchWater, MoveToProcreate, RandomlyMove    
-│       ├── inheritance/               plant_genes, animal_genes, other_genes, InheritanceSystem 
-│       ├── pathfinding/               PathfindingSystem (A*)                                    
-│       ├── reproduction/              ReproductionSystem                                
-│       ├── vision/                    VisionSystem                                               
-│       └── utils/                     Calculations, Random                                    
+│   │   ├── config/        ecosystemConfig — thresholds, intervals, diet maps
+│   │   ├── interfaces/    AnimalActionsInterface, PlantActionsInterface, LivingEntityActionsInterface
+│   │   └── types/         StatValue, Gene, Diet, Position, Distance, Interval
+│   │
+│   └── systems/
+│       ├── movement/      SearchFood, SearchWater, MoveToProcreate, RandomlyMove
+│       ├── inheritance/   plant_genes, animal_genes, other_genes, InheritanceSystem
+│       ├── pathfinding/   PathfindingSystem (A*)
+│       ├── reproduction/  ReproductionSystem
+│       ├── vision/        VisionSystem
+│       └── utils/         Calculations, Random
 │
-├── tests/                             Core Tests, Domain Tests, Systems tests                
-│                                                                                            
-└── ui/                                React frontend (Vite)                                
-    ├── components/                    SimulationGrid, StatisticsPanel, DetailedStats,    
-    │                                  EntityStats, ControlPanel, ConfigMenu, Legend        
-    ├── styles/                                                                        
-    └── utils/                         statsTracker                                        
-`
+├── tests/             Core Tests, Domain Tests, Systems tests
+│
+└── ui/                React frontend (Vite)
+    ├── components/    SimulationGrid, StatisticsPanel, DetailedStats,
+    │                  EntityStats, ControlPanel, ConfigMenu, Legend
+    ├── styles/
+    └── utils/         statsTracker
+```
 
 The movement system uses the **Strategy pattern**: each animal state (`HUNGRY`, `THIRSTY`, `PROCREATING_SEASON`, `NORMAL`) maps to a strategy class that implements `entityMove(animal, world): boolean`. Adding a new behavior means registering a new strategy — nothing else changes.
 
