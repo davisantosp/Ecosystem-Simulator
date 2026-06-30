@@ -28,7 +28,7 @@ type EntityInfo = {
 };
 
 function createInitialWorld(config: SimConfig): World {
-  const world = new World(20, 20);
+  const world = new World(config.gridWidth, config.gridHeight);
 
   const entities: (Animal | Plant)[] = [];
 
