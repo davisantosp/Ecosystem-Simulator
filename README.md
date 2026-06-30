@@ -37,7 +37,7 @@ Animals eat, drink, and reproduce. Plants grow, spread seeds, and get consumed. 
 
 The project is split into four layers that only communicate downward. Domain entities have no knowledge of systems; systems have no knowledge of the UI.
 
-.
+`
 ├── src/
 │   ├── core/                          Engine, World, TurnManager
 │   │                                                            
@@ -65,6 +65,7 @@ The project is split into four layers that only communicate downward. Domain ent
     │                                  EntityStats, ControlPanel, ConfigMenu, Legend        
     ├── styles/                                                                        
     └── utils/                         statsTracker                                        
+`
 
 The movement system uses the **Strategy pattern**: each animal state (`HUNGRY`, `THIRSTY`, `PROCREATING_SEASON`, `NORMAL`) maps to a strategy class that implements `entityMove(animal, world): boolean`. Adding a new behavior means registering a new strategy — nothing else changes.
 
