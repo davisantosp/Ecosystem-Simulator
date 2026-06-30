@@ -4,7 +4,7 @@ A discrete-time ecosystem simulation built with TypeScript and Node, with a Reac
 
 ---
 
-<!-- IMAGEM: screenshot da UI rodando com o grid, painel lateral e gráficos visíveis -->
+![ui-screenshot](.github/assets/ui-screenshot.png)
 
 ---
 
@@ -29,7 +29,7 @@ Animals eat, drink, and reproduce. Plants grow, spread seeds, and get consumed. 
 
 ---
 
-<!-- IMAGEM: GIF da simulação rodando por ~30 ticks mostrando animais se movendo e plantas crescendo -->
+![simulation_running](.github/assets/simulation_running.gif)
 
 ---
 
@@ -98,8 +98,6 @@ The strategy registry maps each `AnimalState` to its strategy. Priority weights 
 
 Plant propagation works the same way. A mature plant has a 5% chance per tick of calling `propagatePlant`, which creates a seed of the same species in an adjacent free cell and routes it through the same `inheritCharacteristics → inheritGenes` pipeline — passing the parent as both `parent1` and `parent2`. Because genes are deduplicated before the transmission roll, each gene gets exactly one chance to be inherited rather than two.
 
-<!-- IMAGEM: diagrama de fluxo do InheritanceSystem mostrando os dois métodos e o GeneStrategyRegistry -->
-
 ---
 
 ## Running the project
@@ -124,6 +122,10 @@ npm test
 
 ---
 
+![population_statistics](.github/assets/population_statistics.png)
+
+---
+
 ## Configuring the simulation
 
 All parameters are accessible through the config panel in the UI without restarting.
@@ -139,6 +141,10 @@ All parameters are accessible through the config panel in the UI without restart
 | Mutation chance | Probability of a new gene appearing per gene type per offspring |
 
 Thresholds for when an animal enters `HUNGRY`, `THIRSTY` or `PROCREATING_SEASON` states are defined as named constants in `src/shared/config/ecosystemConfig.ts`.
+
+---
+
+![configuration_panel](.github/assets/configuration_panel.png)
 
 ---
 
