@@ -1,4 +1,6 @@
 export type SimConfig = {
+  gridWidth: number;
+  gridHeight: number;
   rabbitCount: number;
   wolfCount: number;
   mooseCount: number;
@@ -11,6 +13,8 @@ export type SimConfig = {
 };
 
 export const DEFAULT_CONFIG: SimConfig = {
+  gridWidth: 20,
+  gridHeight: 20,
   rabbitCount: 5,
   wolfCount: 2,
   mooseCount: 1,
@@ -38,6 +42,8 @@ export default function ConfigMenu({
 
     if (key === "tickSpeed") {
       clamped = Math.max(0.1, Math.round(value * 10) / 10);
+    } else if (key === "gridWidth" || key === "gridHeight") {
+      clamped = Math.max(3, Math.min(50, Math.floor(value)));
     } else if (
       key === "rabbitCount" ||
       key === "wolfCount" ||
@@ -60,6 +66,30 @@ export default function ConfigMenu({
 
       <div className={`config-menu${open ? " config-menu--open" : ""}`}>
         <h2>Configuration</h2>
+
+        <fieldset>
+          <legend>Grid</legend>
+          <label>
+            <span>Width</span>
+            <input
+              type="number"
+              min={3}
+              max={50}
+              value={config.gridWidth}
+              onChange={(e) => set("gridWidth", Number(e.target.value))}
+            />
+          </label>
+          <label>
+            <span>Height</span>
+            <input
+              type="number"
+              min={3}
+              max={50}
+              value={config.gridHeight}
+              onChange={(e) => set("gridHeight", Number(e.target.value))}
+            />
+          </label>
+        </fieldset>
 
         <fieldset>
           <legend>Animals</legend>
@@ -121,8 +151,12 @@ export default function ConfigMenu({
               onChange={(e) => set("venomousPlantCount", Number(e.target.value))}
             />
           </label>
+        </fieldset>
+
+        <fieldset>
+          <legend>Water</legend>
           <label>
-            <span>Water ponds</span>
+            <span>Ponds</span>
             <input
               type="number"
               min={0}
