@@ -100,28 +100,6 @@ Plant propagation works the same way. A mature plant has a 5% chance per tick of
 
 ---
 
-## Running the project
-
-**Requirements:** Node 18+
-
-```bash
-# Install dependencies
-npm install
-
-# Run the simulation (console output)
-npm start
-
-# Run the UI
-cd ui
-npm install
-npm run dev
-
-# Run tests
-npm test
-```
-
----
-
 ## Statistics and observability
 
 The UI ships with a statistics layer that runs independently from the simulation logic — `statsTracker` captures a snapshot of the world state every tick without the `Engine` or any system knowing it exists.
@@ -149,6 +127,28 @@ All parameters are accessible through the config panel in the UI without restart
 ![configuration_panel](.github/assets/configuration_panel.png)
 
 Thresholds for when an animal enters `HUNGRY`, `THIRSTY` or `PROCREATING_SEASON` states are defined as named constants in `src/shared/config/ecosystemConfig.ts`.
+
+---
+
+## Running the project
+
+**Requirements:** Node 18+
+
+```bash
+# Install dependencies
+npm install
+
+# Run the simulation (console output)
+npm start
+
+# Run the UI
+cd ui
+npm install
+npm run dev
+
+# Run tests
+npm test
+```
 
 ---
 
