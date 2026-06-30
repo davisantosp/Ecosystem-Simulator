@@ -122,6 +122,14 @@ npm test
 
 ---
 
+## Statistics and observability
+
+The UI ships with a statistics layer that runs independently from the simulation logic — `statsTracker` captures a snapshot of the world state every tick without the `Engine` or any system knowing it exists.
+
+The sidebar shows live counts and sparklines per species, giving a quick read on whether a population is growing or collapsing. The detailed view goes further with four tabs: population over time across all species, individual animal stats (hunger, thirst, speed averages), plant stats (growth rate, nutritional value), and state distribution showing how many entities are currently `HUNGRY`, `THIRSTY` or in `PROCREATING_SEASON` at any given tick.
+
+Because the snapshot history is kept in memory on the frontend, selecting an entity on the grid pulls its full current stat block — including inherited genes — directly from the live `World` reference, with no extra computation needed.
+
 ![population_statistics](.github/assets/population_statistics.png)
 
 ---
@@ -137,14 +145,10 @@ All parameters are accessible through the config panel in the UI without restart
 | Max ticks | Stop condition (0 = run indefinitely) |
 | Initial entity counts | Starting population per species |
 | Water sources | Number of water tiles placed randomly |
-| Spread chance | Probability of a mature plant propagating per tick |
-| Mutation chance | Probability of a new gene appearing per gene type per offspring |
-
-Thresholds for when an animal enters `HUNGRY`, `THIRSTY` or `PROCREATING_SEASON` states are defined as named constants in `src/shared/config/ecosystemConfig.ts`.
-
----
 
 ![configuration_panel](.github/assets/configuration_panel.png)
+
+Thresholds for when an animal enters `HUNGRY`, `THIRSTY` or `PROCREATING_SEASON` states are defined as named constants in `src/shared/config/ecosystemConfig.ts`.
 
 ---
 
